@@ -1,0 +1,90 @@
+﻿@using PJ_Login.ViewModels;
+@using Newtonsoft.Json;
+@model List<LogDBViewModel>
+@{
+    ViewData["Title"] = "bar_close";
+}
+
+<div class="d-flex" id="wrapper">
+    <!-- 側邊導覽列 -->
+    <div class="bg-light border-right" id="sidebar-wrapper">
+        <div class="list-group list-group-flush">
+            <a href="@Url.Action("bar_accept", "LogChart")" class="list-group-item list-group-item-action">Chart 1</a>
+            <a href="@Url.Action("bar_client_rst", "LogChart")" class="list-group-item list-group-item-action">Chart 2</a>
+            <a href="@Url.Action("bar_close", "LogChart")" class="list-group-item list-group-item-action">Chart 3</a>
+            <a href="@Url.Action("bar_deny", "LogChart")" class="list-group-item list-group-item-action">Chart 4</a>
+            <a href="@Url.Action("bar_ip_conn", "LogChart")" class="list-group-item list-group-item-action">Chart 5</a>
+            <a href="@Url.Action("bar_server_rst", "LogChart")" class="list-group-item list-group-item-action">Chart 6</a>
+            <a href="@Url.Action("bar_timeout", "LogChart")" class="list-group-item list-group-item-action">Chart 7</a>
+            <a href="@Url.Action("line_accept_anomlies", "LogChart")" class="list-group-item list-group-item-action">Chart 8</a>
+            <a href="@Url.Action("line_client_rst_anomlies", "LogChart")" class="list-group-item list-group-item-action">Chart 9</a>
+            <a href="@Url.Action("line_close_anomlies", "LogChart")" class="list-group-item list-group-item-action">Chart 10</a>
+            <a href="@Url.Action("line_deny_anomlies", "LogChart")" class="list-group-item list-group-item-action">Chart 11</a>
+            <a href="@Url.Action("line_ip_conn_anomlies", "LogChart")" class="list-group-item list-group-item-action">Chart 12</a>
+            <a href="@Url.Action("line_server_rst_anomlies", "LogChart")" class="list-group-item list-group-item-action">Chart 13</a>
+            <a href="@Url.Action("line_timeout_anomlies", "LogChart")" class="list-group-item list-group-item-action">Chart 14</a>
+        </div>
+    </div>
+
+    <!-- 內容區域 -->
+    <div id="page-content-wrapper">
+        <h1>目的IP的Close次數統計圖</h1>
+        <canvas id="barChart" width="750" height="500"></canvas>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var dataAcceptJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.condition == "close").OrderBy(x => x.y)))';
+    var dataAccept = JSON.parse(dataAcceptJson);
+    var dataCount = dataAccept.reduce(function (countMap, item) {
+        countMap[item.y] = (countMap[item.y] || 0) + 1;
+        return countMap;
+    }, {});
+    var labels = Object.keys(dataCount);
+    var data = Object.values(dataCount);
+
+
+
+
+
+    //長條圖
+    var ctx = document.getElementById('barChart').getContext('2d');
+    var barData = {
+        labels: labels, // X軸的標籤
+        datasets: [{
+            label: 'Action狀態為close次數',
+            data: data, // Y軸的數值
+            backgroundColor: 'grey' // 長條的背景顏色
+        }]
+    };
+    Chart.defaults.font.size = 20;
+    var barOptions = {
+        responsive: true,
+        scales: {
+            x: {
+                display: true,
+                title: {
+                    display: true,
+                    text: 'DIP'
+                }
+            },
+            y: {
+                display: true,
+                title: {
+                    display: true,
+
+                },
+                suggestedMin: 0 // Y軸的最小值
+            }
+        }
+    };
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: barData,
+        options: barOptions
+    });
+</script>
+
