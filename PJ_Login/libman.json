@@ -9,6 +9,11 @@
     {
       "library": "d3@7.8.5",
       "destination": "wwwroot/lib/d3/"
+    },
+    {
+      "provider": "cdnjs",
+      "library": "jquery@3.7.0",
+      "destination": "wwwroot/lib/jquery/"
     }
   ]
 }

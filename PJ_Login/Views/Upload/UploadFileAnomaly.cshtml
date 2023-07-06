@@ -1,11 +1,12 @@
-﻿@{
-    ViewData["Title"] = "UploadFile";
+﻿
+@{
+    ViewData["Title"] = "UploadFileAnomaly";
 }
 <link href="~/css/uploadfile.css" rel="stylesheet" />
-<h1 class="upload-title">訓練模型檔案上傳</h1>
+<h1 class="upload-title">異常檢測檔案上傳</h1>
 
 <div class="upload-form">
-    <form asp-action="UploadFile" method="post" enctype="multipart/form-data">
+    <form asp-action="UploadFileAnomaly" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="file" class="file-label">請選擇檔案：</label>
             <input type="file" name="file" id="file" class="form-control-file file-input" />
