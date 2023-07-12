@@ -1,31 +1,29 @@
 ﻿@using PJ_Login.ViewModels;
 @using Newtonsoft.Json;
-@model List<LogDBViewModel>
+@model List<echartsViewModel>
 @{
-    ViewData["Title"] = "bar_accept";
+    ViewData["Title"] = "parallel";
 }
 <style>
-    body {
+    body{
         background-color: #9ccdf2;
     }
 
-    #page-content-wrapper {
-        background-color: white;
+    #page-content-wrapper{
+        background-color:white;
     }
     #chart-group-1,
-    #chart-group-2,
-    #chart-group-3{
+    #chart-group-2 {
         display: none;
     }
 
     .collapsed {
         display: none !important;
     }
-
 </style>
 <div class="d-flex" id="wrapper">
     <!-- 側邊導覽列 -->
-    <div class="bg-light border-right" id="sidebar-wrapper">
+    <div class="bg-light border-right rounded" id="sidebar-wrapper">
         <div class="list-group list-group-flush">
             <a href="@Url.Action("parallel", "LogChart")" class="list-group-item list-group-item-action">主要路徑</a>
             <a href="#" class="list-group-item list-group-item-action toggle-collapse" data-target="#chart-group-1">原始資料</a>
@@ -53,12 +51,13 @@
 
     <!-- 內容區域 -->
     <div id="page-content-wrapper" class="rounded">
-        <h1>目的IP的Accept次數統計圖</h1>
-        <canvas id="barChart" width="1000" height="500"></canvas>
+        <h1>平行座標圖</h1>
+        <div id="chartContainer" style="width: 1000px; height: 500px;"></div>
     </div>
 
 </div>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.2.1/dist/echarts.min.js"></script>
 <script src="~/lib/jquery/jquery.min.js"></script>
 <script>
     $(document).ready(function () {
@@ -70,54 +69,37 @@
         });
     });
 
-    var dataAcceptJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.condition == "accept").OrderBy(x => x.y)))';
-    var dataAccept = JSON.parse(dataAcceptJson);
-    var dataCount = dataAccept.reduce(function (countMap, item) {
-        countMap[item.y] = (countMap[item.y] || 0) + 1;
-        return countMap;
-    }, {});
-    var labels = Object.keys(dataCount);
-    var data = Object.values(dataCount);
+    var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model))';
+    var datas = JSON.parse(dataJson);
+    var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
+    var dataaction = JSON.parse(dataActionJson);
+    var ActionData = [...new Set(dataaction)];
+    var chart = echarts.init(document.getElementById('chartContainer'));
+    var convertedData = datas.map(function (item) {
+        return [item.x, item.Sport, item.y, item.Dport, item.Action];
+    });
+    var option;
 
-
-
-
-
-    //長條圖
-    var ctx = document.getElementById('barChart').getContext('2d');
-    var barData = {
-        labels: labels, // X軸的標籤
-        datasets: [{
-            label: 'Action狀態為accept次數',
-            data: data, // Y軸的數值
-            backgroundColor: 'rgba(0, 123, 255, 0.5)' // 長條的背景顏色
-        }]
-    };
-    Chart.defaults.font.size = 20;
-    var barOptions = {
-        responsive: true,
-        scales: {
-            x: {
-                display: true,
-                title: {
-                    display: true,
-                    text: 'DIP'
-                }
-            },
-            y: {
-                display: true,
-                title: {
-                    display: true,
-
-                },
-                suggestedMin: 0 // Y軸的最小值
+    option = {
+        parallelAxis: [
+            { dim: 0, name: 'SIP' },
+            { dim: 1, name: 'Sport' },
+            { dim: 2, name: 'DIP' },
+            { dim: 3, name: 'Dport' },
+            {
+                dim: 4,
+                name: 'Action',
+                type: 'category',
+                data: ActionData
             }
+        ],
+        series: {
+            type: 'parallel',
+            lineStyle: {
+                width: 4
+            },
+            data: convertedData
         }
     };
-
-    new Chart(ctx, {
-        type: 'bar',
-        data: barData,
-        options: barOptions
-    });
+    chart.setOption(option);
 </script>

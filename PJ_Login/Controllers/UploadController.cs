@@ -27,7 +27,7 @@ namespace PJ_Login.Controllers
                     try
                     {
                         // 檔案儲存路徑
-                        string relativePath = @"..\..\..\..\log"; // 相對路徑
+                        string relativePath = @"..\..\..\..\Mechine_Learning\log"; // 相對路徑
                         string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
 
                         // 確保路徑存在，如果不存在就建立資料夾
@@ -97,7 +97,7 @@ namespace PJ_Login.Controllers
                     try
                     {
                         // 檔案儲存路徑
-                        string relativePath = @"..\..\..\..\log"; // 相對路徑
+                        string relativePath = @"..\..\..\..\Mechine_Learning\log"; // 相對路徑
                         string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
 
                         // 確保路徑存在，如果不存在就建立資料夾

@@ -5,6 +5,13 @@
     ViewData["Title"] = "bar_deny";
 }
 <style>
+    body {
+        background-color: #9ccdf2;
+    }
+
+    #page-content-wrapper {
+        background-color: white;
+    }
     #chart-group-1,
     #chart-group-2 {
         display: none;
@@ -18,39 +25,50 @@
     <!-- 側邊導覽列 -->
     <div class="bg-light border-right" id="sidebar-wrapper">
         <div class="list-group list-group-flush">
+            <a href="@Url.Action("parallel", "LogChart")" class="list-group-item list-group-item-action">主要路徑</a>
             <a href="#" class="list-group-item list-group-item-action toggle-collapse" data-target="#chart-group-1">原始資料</a>
             <div id="chart-group-1">
-                <a href="@Url.Action("bar_accept", "LogChart")" class="list-group-item list-group-item-action">Chart 1</a>
-                <a href="@Url.Action("bar_client_rst", "LogChart")" class="list-group-item list-group-item-action">Chart 2</a>
-                <a href="@Url.Action("bar_close", "LogChart")" class="list-group-item list-group-item-action">Chart 3</a>
-                <a href="@Url.Action("bar_deny", "LogChart")" class="list-group-item list-group-item-action">Chart 4</a>
-                <a href="@Url.Action("bar_ip_conn", "LogChart")" class="list-group-item list-group-item-action">Chart 5</a>
-                <a href="@Url.Action("bar_server_rst", "LogChart")" class="list-group-item list-group-item-action">Chart 6</a>
-                <a href="@Url.Action("bar_timeout", "LogChart")" class="list-group-item list-group-item-action">Chart 7</a>
+                <a href="@Url.Action("bar_accept", "LogChart")" class="list-group-item list-group-item-action">accept</a>
+                <a href="@Url.Action("bar_client_rst", "LogChart")" class="list-group-item list-group-item-action">client_rst</a>
+                <a href="@Url.Action("bar_close", "LogChart")" class="list-group-item list-group-item-action">close</a>
+                <a href="@Url.Action("bar_deny", "LogChart")" class="list-group-item list-group-item-action">dney</a>
+                <a href="@Url.Action("bar_ip_conn", "LogChart")" class="list-group-item list-group-item-action">ip_conn</a>
+                <a href="@Url.Action("bar_server_rst", "LogChart")" class="list-group-item list-group-item-action">server_rst</a>
+                <a href="@Url.Action("bar_timeout", "LogChart")" class="list-group-item list-group-item-action">timeout</a>
             </div>
             <a href="#" class="list-group-item list-group-item-action toggle-collapse" data-target="#chart-group-2">異常檢測</a>
             <div id="chart-group-2">
-                <a href="@Url.Action("line_accept_anomlies", "LogChart")" class="list-group-item list-group-item-action">Chart 8</a>
-                <a href="@Url.Action("line_client_rst_anomlies", "LogChart")" class="list-group-item list-group-item-action">Chart 9</a>
-                <a href="@Url.Action("line_close_anomlies", "LogChart")" class="list-group-item list-group-item-action">Chart 10</a>
-                <a href="@Url.Action("line_deny_anomlies", "LogChart")" class="list-group-item list-group-item-action">Chart 11</a>
-                <a href="@Url.Action("line_ip_conn_anomlies", "LogChart")" class="list-group-item list-group-item-action">Chart 12</a>
-                <a href="@Url.Action("line_server_rst_anomlies", "LogChart")" class="list-group-item list-group-item-action">Chart 13</a>
-                <a href="@Url.Action("line_timeout_anomlies", "LogChart")" class="list-group-item list-group-item-action">Chart 14</a>
+                <a href="@Url.Action("line_accept_anomlies", "LogChart")" class="list-group-item list-group-item-action">accept</a>
+                <a href="@Url.Action("line_client_rst_anomlies", "LogChart")" class="list-group-item list-group-item-action">client_rst</a>
+                <a href="@Url.Action("line_close_anomlies", "LogChart")" class="list-group-item list-group-item-action">close</a>
+                <a href="@Url.Action("line_deny_anomlies", "LogChart")" class="list-group-item list-group-item-action">deny</a>
+                <a href="@Url.Action("line_ip_conn_anomlies", "LogChart")" class="list-group-item list-group-item-action">ip_conn</a>
+                <a href="@Url.Action("line_server_rst_anomlies", "LogChart")" class="list-group-item list-group-item-action">server_rst</a>
+                <a href="@Url.Action("line_timeout_anomlies", "LogChart")" class="list-group-item list-group-item-action">timeout</a>
             </div>
         </div>
     </div>
 
     <!-- 內容區域 -->
-    <div id="page-content-wrapper">
+    <div id="page-content-wrapper" class="rounded">
         <h1>目的IP的Deny次數統計圖</h1>
-        <canvas id="barChart" width="750" height="500"></canvas>
+        <canvas id="barChart" width="1000" height="500"></canvas>
     </div>
 
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="~/lib/jquery/jquery.min.js"></script>
 <script>
+    $(document).ready(function () {
+        $('.toggle-collapse').click(function (e) {
+            e.preventDefault();
+            var target = $(this).data('target');
+            $(target).slideToggle();
+            $(this).toggleClass('collapsed');
+        });
+    });
+
     var dataAcceptJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.condition == "deny").OrderBy(x => x.y)))';
     var dataAccept = JSON.parse(dataAcceptJson);
     var dataCount = dataAccept.reduce(function (countMap, item) {
@@ -100,19 +118,5 @@
         type: 'bar',
         data: barData,
         options: barOptions
-    });
-</script>
-<script src="~/lib/jquery/jquery.js"></script>
-<script src="~/lib/jquery/jquery.min.js"></script>
-<script src="~/lib/jquery/jquery.slim.js"></script>
-<script src="~/lib/jquery/jquery.slim.min.js"></script>
-<script>
-    $(document).ready(function () {
-        $('.toggle-collapse').click(function (e) {
-            e.preventDefault();
-            var target = $(this).data('target');
-            $(target).slideToggle();
-            $(this).toggleClass('collapsed');
-        });
     });
 </script>
