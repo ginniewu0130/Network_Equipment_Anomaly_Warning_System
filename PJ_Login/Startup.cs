@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using PJ_Login.Data;
 using Microsoft.AspNetCore.Http;
+using PJ_Login.Models;
 
 namespace PJ_Login
 {
@@ -57,6 +58,9 @@ namespace PJ_Login
             {
                 options.UseSqlServer(Configuration.GetConnectionString("ChartDBContext"));
             });
+            services.AddOptions<AppSettings>()
+                .Bind(Configuration.GetSection("AppSettings"))
+                .ValidateDataAnnotations();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,7 +78,7 @@ namespace PJ_Login
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            var filePath = Configuration.GetSection("AppSettings:FilePath").Value;
             app.UseRouting();
 
             //Cookie驗證所需Middleware

@@ -52,6 +52,32 @@
     <!-- 內容區域 -->
     <div id="page-content-wrapper" class="rounded">
         <h1>平行座標圖</h1>
+        <div class="row">
+            <div class="col">
+                <input type="radio" name="myOptions" id="dataall" value="option1" />
+                <label for="option1">網路位置all</label>
+            </div>
+            <div class="col">
+                <input type="radio" name="myOptions" id="datarange1" value="option1" />
+                <label for="option1">SIP1~50</label>
+            </div>
+            <div class="col">
+                <input type="radio" name="myOptions" id="datarange2" value="option1" />
+                <label for="option1">SIP51~100</label>
+            </div>
+            <div class="col">
+                <input type="radio" name="myOptions" id="datarange3" value="option1" />
+                <label for="option1">SIP101~150</label>
+            </div>
+            <div class="col">
+                <input type="radio" name="myOptions" id="datarange4" value="option1" />
+                <label for="option1">SIP151~200</label>
+            </div>
+            <div class="col">
+                <input type="radio" name="myOptions" id="datarange5" value="option1" />
+                <label for="option1">SIP201~255</label>
+            </div>
+        </div>
         <div id="chartContainer" style="width: 1000px; height: 500px;"></div>
     </div>
 
@@ -69,25 +95,260 @@
         });
     });
 
+    var dataall = document.getElementById('dataall');
+    var datarange1 = document.getElementById('datarange1');
+    var datarange2 = document.getElementById('datarange2');
+    var datarange3 = document.getElementById('datarange3');
+    var datarange4 = document.getElementById('datarange4');
+    var datarange5 = document.getElementById('datarange5');
+    var data1 = [];
+    var convertedData = [];
+    //條件觸發
+    //rangeall
+    dataall.addEventListener('click', function () {
+
+        var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model))';
+        var datas = JSON.parse(dataJson);
+        data1 = datas
+        convertedData = data1.map(function (item) {
+            return [item.x, item.y, item.Action];
+        });
+        var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
+        var dataaction = JSON.parse(dataActionJson);
+        var ActionData = [...new Set(dataaction)];
+        var chart = echarts.init(document.getElementById('chartContainer'));
+
+        var option;
+
+        option = {
+            parallelAxis: [
+                { dim: 0, name: 'SIP' },
+                { dim: 1, name: 'DIP' },
+                {
+                    dim: 2,
+                    name: 'Action',
+                    type: 'category',
+                    data: ActionData
+                }
+            ],
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 4
+                },
+                data: convertedData
+            }
+        };
+        chart.setOption(option);
+    });
+    //range1
+    datarange1.addEventListener('click', function () {
+
+        var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.x >= 1 && x.x<=50)))';
+        var datas = JSON.parse(dataJson);
+        data1 = datas
+        convertedData = data1.map(function (item) {
+            return [item.x, item.y, item.Action];
+        });
+        var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
+        var dataaction = JSON.parse(dataActionJson);
+        var ActionData = [...new Set(dataaction)];
+        var chart = echarts.init(document.getElementById('chartContainer'));
+
+        var option;
+
+        option = {
+            parallelAxis: [
+                { dim: 0, name: 'SIP' },
+                { dim: 1, name: 'DIP' },
+                {
+                    dim: 2,
+                    name: 'Action',
+                    type: 'category',
+                    data: ActionData
+                }
+            ],
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 4
+                },
+                data: convertedData
+            }
+        };
+        chart.setOption(option);
+    });
+    //range2
+    datarange2.addEventListener('click', function () {
+
+        var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.x >= 51 && x.x<=100)))';
+        var datas = JSON.parse(dataJson);
+        data1 = datas
+        convertedData = data1.map(function (item) {
+            return [item.x, item.y, item.Action];
+        });
+        var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
+        var dataaction = JSON.parse(dataActionJson);
+        var ActionData = [...new Set(dataaction)];
+        var chart = echarts.init(document.getElementById('chartContainer'));
+
+        var option;
+
+        option = {
+            parallelAxis: [
+                { dim: 0, name: 'SIP' },
+                { dim: 1, name: 'DIP' },
+                {
+                    dim: 2,
+                    name: 'Action',
+                    type: 'category',
+                    data: ActionData
+                }
+            ],
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 4
+                },
+                data: convertedData
+            }
+        };
+        chart.setOption(option);
+    });
+    //range3
+    datarange3.addEventListener('click', function () {
+
+        var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.x >= 101 && x.x<=150)))';
+        var datas = JSON.parse(dataJson);
+        data1 = datas
+        convertedData = data1.map(function (item) {
+            return [item.x, item.y, item.Action];
+        });
+        var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
+        var dataaction = JSON.parse(dataActionJson);
+        var ActionData = [...new Set(dataaction)];
+        var chart = echarts.init(document.getElementById('chartContainer'));
+
+        var option;
+
+        option = {
+            parallelAxis: [
+                { dim: 0, name: 'SIP' },
+                { dim: 1, name: 'DIP' },
+                {
+                    dim: 2,
+                    name: 'Action',
+                    type: 'category',
+                    data: ActionData
+                }
+            ],
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 4
+                },
+                data: convertedData
+            }
+        };
+        chart.setOption(option);
+    });
+    //range4
+    datarange4.addEventListener('click', function () {
+
+        var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.x >= 151 && x.x<=200)))';
+        var datas = JSON.parse(dataJson);
+        data1 = datas
+        convertedData = data1.map(function (item) {
+            return [item.x, item.y, item.Action];
+        });
+        var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
+        var dataaction = JSON.parse(dataActionJson);
+        var ActionData = [...new Set(dataaction)];
+        var chart = echarts.init(document.getElementById('chartContainer'));
+
+        var option;
+
+        option = {
+            parallelAxis: [
+                { dim: 0, name: 'SIP' },
+                { dim: 1, name: 'DIP' },
+                {
+                    dim: 2,
+                    name: 'Action',
+                    type: 'category',
+                    data: ActionData
+                }
+            ],
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 4
+                },
+                data: convertedData
+            }
+        };
+        chart.setOption(option);
+    });
+    //range5
+    datarange5.addEventListener('click', function () {
+
+        var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.x >= 201 && x.x<=255)))';
+        var datas = JSON.parse(dataJson);
+        data1 = datas
+        convertedData = data1.map(function (item) {
+            return [item.x, item.y, item.Action];
+        });
+        var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
+        var dataaction = JSON.parse(dataActionJson);
+        var ActionData = [...new Set(dataaction)];
+        var chart = echarts.init(document.getElementById('chartContainer'));
+
+        var option;
+
+        option = {
+            parallelAxis: [
+                { dim: 0, name: 'SIP' },
+                { dim: 1, name: 'DIP' },
+                {
+                    dim: 2,
+                    name: 'Action',
+                    type: 'category',
+                    data: ActionData
+                }
+            ],
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 4
+                },
+                data: convertedData
+            }
+        };
+        chart.setOption(option);
+    });
+    //var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model))';
+    //var datas = JSON.parse(dataJson);
+    //var convertedData = datas.map(function (item) {
+    //    return [item.x, item.Sport, item.y, item.Dport, item.Action];
+    //});
     var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model))';
     var datas = JSON.parse(dataJson);
+    convertedData = datas.map(function (item) {
+        return [item.x, item.y, item.Action];
+    });
     var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
     var dataaction = JSON.parse(dataActionJson);
     var ActionData = [...new Set(dataaction)];
     var chart = echarts.init(document.getElementById('chartContainer'));
-    var convertedData = datas.map(function (item) {
-        return [item.x, item.Sport, item.y, item.Dport, item.Action];
-    });
+
     var option;
 
     option = {
         parallelAxis: [
             { dim: 0, name: 'SIP' },
-            { dim: 1, name: 'Sport' },
-            { dim: 2, name: 'DIP' },
-            { dim: 3, name: 'Dport' },
+            { dim: 1, name: 'DIP' },
             {
-                dim: 4,
+                dim: 2,
                 name: 'Action',
                 type: 'category',
                 data: ActionData

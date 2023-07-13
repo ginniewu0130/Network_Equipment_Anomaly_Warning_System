@@ -4,12 +4,22 @@ using System.IO;
 using System.Text;
 using System;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
+using PJ_Login.Models;
 
 namespace PJ_Login.Controllers
 {
     [Authorize]
     public class UploadController : Controller
     {
+        private readonly string _filePath;
+
+        public UploadController(IOptions<AppSettings> appSettings)
+        {
+            _filePath = appSettings.Value.FilePath;
+            System.Diagnostics.Debug.WriteLine("FilePath: " + _filePath);
+        }
+
         public IActionResult UploadFile()
         {
             return View();
@@ -27,8 +37,8 @@ namespace PJ_Login.Controllers
                     try
                     {
                         // 檔案儲存路徑
-                        string relativePath = @"..\..\..\..\Mechine_Learning\log"; // 相對路徑
-                        string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+                        string fullPath = Path.Combine(_filePath);
+
 
                         // 確保路徑存在，如果不存在就建立資料夾
                         if (!Directory.Exists(fullPath))
@@ -97,8 +107,8 @@ namespace PJ_Login.Controllers
                     try
                     {
                         // 檔案儲存路徑
-                        string relativePath = @"..\..\..\..\Mechine_Learning\log"; // 相對路徑
-                        string fullPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, relativePath);
+                        string fullPath = Path.Combine(_filePath);
+
 
                         // 確保路徑存在，如果不存在就建立資料夾
                         if (!Directory.Exists(fullPath))
