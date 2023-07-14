@@ -6,6 +6,7 @@ using System;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using PJ_Login.Models;
+using System.Collections.Generic;
 
 namespace PJ_Login.Controllers
 {
@@ -69,7 +70,7 @@ namespace PJ_Login.Controllers
                             // 儲存轉換後的 TXT 檔案
                             System.IO.File.WriteAllText(filePath, txtContent, Encoding.UTF8);
 
-                            ViewBag.Message = "檔案已成功轉換並儲存。";
+                            ViewBag.Message = "檔案已成功轉換並儲存，開始執行訓練模型，請靜待Line notify通知完成。";
                         }
                     }
                     catch (Exception ex)
@@ -140,7 +141,7 @@ namespace PJ_Login.Controllers
                             // 儲存轉換後的 TXT 檔案
                             System.IO.File.WriteAllText(filePath, txtContent, Encoding.UTF8);
 
-                            ViewBag.Message = "檔案已成功轉換並儲存。";
+                            ViewBag.Message = "檔案已成功轉換並儲存，開始進行異常檢測，請靜待Line notify通知完成。";
                         }
                     }
                     catch (Exception ex)
