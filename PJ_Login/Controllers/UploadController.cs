@@ -17,7 +17,6 @@ namespace PJ_Login.Controllers
         public UploadController(IOptions<AppSettings> appSettings)
         {
             _filePath = appSettings.Value.FilePath;
-            System.Diagnostics.Debug.WriteLine("FilePath: " + _filePath);
         }
 
         public IActionResult UploadFile()

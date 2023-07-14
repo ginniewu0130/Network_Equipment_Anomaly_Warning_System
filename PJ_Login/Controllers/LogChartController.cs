@@ -259,5 +259,22 @@ namespace PJ_Login.Controllers
             }
             return View(heat);
         }
+        public IActionResult scatter_bar()
+        {
+            List<LogChart> charts = _context.LogCharts.ToList();
+            List<echartsViewModel> heat = new List<echartsViewModel>();
+            foreach (LogChart chart in charts)
+            {
+                heat.Add(new echartsViewModel
+                {
+                    x = chart.SourceIp,
+                    SPort = chart.SourcePort,
+                    y = chart.DestinationIp,
+                    DPort = chart.DistinationPort,
+                    Action = chart.Action
+                });
+            }
+            return View(heat);
+        }
     }
 }

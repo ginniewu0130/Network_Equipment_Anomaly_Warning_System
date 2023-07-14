@@ -26,6 +26,7 @@
     <div class="bg-light border-right rounded" id="sidebar-wrapper">
         <div class="list-group list-group-flush">
             <a href="@Url.Action("parallel", "LogChart")" class="list-group-item list-group-item-action">主要路徑</a>
+            <a href="@Url.Action("scatter_bar", "LogChart")" class="list-group-item list-group-item-action">連線分析</a>
             <a href="#" class="list-group-item list-group-item-action toggle-collapse" data-target="#chart-group-1">原始資料</a>
             <div id="chart-group-1">
                 <a href="@Url.Action("bar_accept", "LogChart")" class="list-group-item list-group-item-action">accept</a>
@@ -51,7 +52,7 @@
 
     <!-- 內容區域 -->
     <div id="page-content-wrapper" class="rounded">
-        <h1>平行座標圖</h1>
+        <h1>連線分析平行座標圖</h1>
         <div class="row">
             <div class="col">
                 <input type="radio" name="myOptions" id="dataall" value="option1" />

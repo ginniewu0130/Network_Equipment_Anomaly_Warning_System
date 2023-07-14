@@ -38,14 +38,13 @@ namespace PJ_Login
                     //登入路徑
                     options.LoginPath = new PathString("/Login/LoginPage");
                     //登出路徑
-                    options.LogoutPath = new PathString("/Login/Logout");
+                    options.LogoutPath = new PathString("/Login/LoginPage");
                     //拒絕存取路徑
                     options.AccessDeniedPath = new PathString("/Login/AccessDenied");
                 });
-            //services.AddAuthorization(options =>
-            //{
-            //    options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
-            //});
+            services.AddOptions<AppSettings>()
+                .Bind(Configuration.GetSection("AppSettings"))
+                .ValidateDataAnnotations();
             services.AddDbContext<LoginContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("LoginContext"));
@@ -58,9 +57,6 @@ namespace PJ_Login
             {
                 options.UseSqlServer(Configuration.GetConnectionString("ChartDBContext"));
             });
-            services.AddOptions<AppSettings>()
-                .Bind(Configuration.GetSection("AppSettings"))
-                .ValidateDataAnnotations();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
