@@ -17,18 +17,22 @@
         display: none;
     }
 
+    .custom-link {
+        background-color: #0000CC;
+        color: white;
+    }
     .collapsed {
-        display: none !important;
+        display: block;
     }
 </style>
 <div class="d-flex" id="wrapper">
     <!-- 側邊導覽列 -->
     <div class="bg-light border-right" id="sidebar-wrapper">
         <div class="list-group list-group-flush">
-            <a href="@Url.Action("parallel", "LogChart")" class="list-group-item list-group-item-action">主要路徑</a>
-            <a href="@Url.Action("scatter_bar", "LogChart")" class="list-group-item list-group-item-action">連線分析</a>
-            <a href="#" class="list-group-item list-group-item-action toggle-collapse" data-target="#chart-group-1">原始資料</a>
-            <div id="chart-group-1">
+            <a href="@Url.Action("parallel", "LogChart")" class="list-group-item list-group-item-action custom-link">主要路徑</a>
+            <a href="@Url.Action("scatter_bar", "LogChart")" class="list-group-item list-group-item-action custom-link">連線分析</a>
+            <a href="#" class="list-group-item list-group-item-action toggle-collapse custom-link" data-target="#chart-group-1">原始資料</a>
+            <div id="chart-group-1" class="collapsed">
                 <a href="@Url.Action("bar_accept", "LogChart")" class="list-group-item list-group-item-action">accept</a>
                 <a href="@Url.Action("bar_client_rst", "LogChart")" class="list-group-item list-group-item-action">client_rst</a>
                 <a href="@Url.Action("bar_close", "LogChart")" class="list-group-item list-group-item-action">close</a>
@@ -37,8 +41,8 @@
                 <a href="@Url.Action("bar_server_rst", "LogChart")" class="list-group-item list-group-item-action">server_rst</a>
                 <a href="@Url.Action("bar_timeout", "LogChart")" class="list-group-item list-group-item-action">timeout</a>
             </div>
-            <a href="#" class="list-group-item list-group-item-action toggle-collapse" data-target="#chart-group-2">異常檢測</a>
-            <div id="chart-group-2">
+            <a href="#" class="list-group-item list-group-item-action toggle-collapse custom-link" data-target="#chart-group-2">異常檢測</a>
+            <div id="chart-group-2" class="collapsed">
                 <a href="@Url.Action("line_accept_anomlies", "LogChart")" class="list-group-item list-group-item-action">accept</a>
                 <a href="@Url.Action("line_client_rst_anomlies", "LogChart")" class="list-group-item list-group-item-action">client_rst</a>
                 <a href="@Url.Action("line_close_anomlies", "LogChart")" class="list-group-item list-group-item-action">close</a>
