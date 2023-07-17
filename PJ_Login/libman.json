@@ -17,6 +17,10 @@
     {
       "library": "echarts@5.4.2",
       "destination": "wwwroot/lib/echarts/"
+    },
+    {
+      "library": "sweetalert2@11.7.18",
+      "destination": "wwwroot/lib/sweetalert2/"
     }
   ]
 }

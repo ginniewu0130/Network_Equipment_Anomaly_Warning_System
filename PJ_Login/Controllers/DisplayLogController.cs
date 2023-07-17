@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using PJ_Login.Models;
 using PJ_Login.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PJ_Login.Controllers
 {
@@ -14,6 +15,7 @@ namespace PJ_Login.Controllers
         {
             _ctx = ctx;
         }
+        [Authorize]
         public IActionResult DisplayLogList()
         {
             List<LogChartAnomly> abnomalLog  = _ctx.LogChartAnomlies.ToList();
@@ -26,7 +28,8 @@ namespace PJ_Login.Controllers
                     DestinationIp = log.DestinationIp,
                     SourcePort = log.SourcePort,
                     DistinationPort = log.DistinationPort,
-                    Action = log.Action
+                    Action = log.Action,
+                    id = log.id
                 });
             }
 

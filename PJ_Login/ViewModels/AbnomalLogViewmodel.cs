@@ -10,5 +10,6 @@ namespace PJ_Login.ViewModels
         public int? SourcePort { get; set; }
         public int? DistinationPort { get; set; }
         public string Action { get; set; }
+        public int id { get; set; }
     }
 }
