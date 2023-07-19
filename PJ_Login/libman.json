@@ -21,6 +21,10 @@
     {
       "library": "sweetalert2@11.7.18",
       "destination": "wwwroot/lib/sweetalert2/"
+    },
+    {
+      "library": "bootstrap-daterangepicker@3.0.5",
+      "destination": "wwwroot/lib/bootstrap-daterangepicker/"
     }
   ]
 }

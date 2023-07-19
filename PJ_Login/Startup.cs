@@ -75,6 +75,7 @@ namespace PJ_Login
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             var filePath = Configuration.GetSection("AppSettings:FilePath").Value;
+            var pythonScriptPath = Configuration.GetSection("AppSettings:PythonScriptPath").Value;
             app.UseRouting();
 
             //Cookie驗證所需Middleware

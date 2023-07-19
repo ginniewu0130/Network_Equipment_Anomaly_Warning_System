@@ -29,6 +29,7 @@ namespace PJ_Login.Controllers
                     SourcePort = log.SourcePort,
                     DistinationPort = log.DistinationPort,
                     Action = log.Action,
+                    Level = log.Level,
                     id = log.id
                 });
             }

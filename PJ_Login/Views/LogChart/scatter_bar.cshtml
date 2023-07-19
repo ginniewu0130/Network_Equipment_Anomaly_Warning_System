@@ -7,10 +7,12 @@
 <style>
     body {
         background-color: #9ccdf2;
+        font-family: Arial, sans-serif;
     }
 
     #page-content-wrapper {
         background-color: white;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
     }
 
     #chart-group-1,
@@ -19,13 +21,13 @@
     }
 
     .custom-link {
-        background-color: #0000CC;
+        background-color: #3085d6;
         color: white;
     }
+
     .collapsed {
         display: block;
     }
-
 </style>
 <div class="d-flex" id="wrapper">
     <!-- 側邊導覽列 -->
@@ -283,7 +285,7 @@
                             formatter: '{b}: {c}', // 標籤格式
                             color: 'black',
                             textStyle: {
-                                fontSize: 20
+                                fontSize: 18
                             }
                         }
                     },
@@ -299,7 +301,7 @@
                             formatter: '{b}: {c}', // 標籤格式
                             color: 'black',
                             textStyle: {
-                                fontSize: 20
+                                fontSize: 18
                             }
                         }
 
@@ -316,7 +318,7 @@
                             formatter: '{b}: {c}', // 標籤格式
                             color: 'black',
                             textStyle: {
-                                fontSize: 20
+                                fontSize: 18
                             }
                         }
                     },
@@ -332,7 +334,7 @@
                             formatter: '{b}: {c}', // 標籤格式
                             color: 'black',
                             textStyle: {
-                                fontSize: 20
+                                fontSize: 18
                             }
                         }
                     },
@@ -348,7 +350,7 @@
                             formatter: '{b}: {c}', // 標籤格式
                             color: 'black',
                             textStyle: {
-                                fontSize: 20
+                                fontSize: 18
                             }
                         }
                     },
@@ -364,7 +366,7 @@
                             formatter: '{b}: {c}', // 標籤格式
                             color: 'black',
                             textStyle: {
-                                fontSize: 20
+                                fontSize: 18
                             }
                         }
                     },
@@ -380,7 +382,7 @@
                             formatter: '{b}: {c}', // 標籤格式
                             color: 'black',
                             textStyle: {
-                                fontSize: 20
+                                fontSize: 18
                             }
                         }
                     },
@@ -400,6 +402,6 @@
     setInterval(function () {
         currentOption = currentOption === scatterOption ? barOption : scatterOption;
         chart.setOption(currentOption, true);
-    }, 4000);
+    }, 10000);
     chart.setOption(option);
 </script>

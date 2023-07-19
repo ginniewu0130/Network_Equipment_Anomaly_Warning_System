@@ -7,9 +7,7 @@
 <style>
     body {
         background-color: #9ccdf2;
-    }
-    h1{
-        font-family: Arial;
+        font-family: Arial, sans-serif;
     }
     #dataContainer {
         margin-top: 20px;
@@ -19,6 +17,7 @@
     table {
         border-collapse: collapse;
         width: 100%;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
     }
 
     th, td {
@@ -27,7 +26,7 @@
         border-bottom: 1px solid #ddd;
     }
 </style>
-<h1 class="text-center">異常Log清單</h1>
+<h1 class="text-center">檢測Log清單</h1>
 <div class="d-flex flex-row justify-content-between">
     <div class="d-flex flex-row">
         <h5>每頁顯示筆數: </h5>
@@ -41,7 +40,7 @@
     <div class="d-flex flex-row">
         <h5>Action選取: </h5>
         <select class="form-select rounded" aria-label="Action select" onchange="filterData(this.value)">
-            <option selected value="all">----ALL----</option>
+            <option selected value="all">====ALL====</option>
             <option value="accept">Accept</option>
             <option value="client-rst">Client-Reset</option>
             <option value="close">Close</option>
@@ -108,7 +107,7 @@
         // 添加 "上一頁" 按鈕
         if (currentPage > 1) {
             var prevPageButton = document.createElement("button");
-            prevPageButton.textContent = "<<上一頁";
+            prevPageButton.textContent = "上一頁";
             prevPageButton.classList.add("btn", "btn-primary", "me-2");
             prevPageButton.onclick = function () {
                 goToPage(currentPage - 1);
@@ -142,7 +141,7 @@
         // 添加 "下一頁" 按鈕
         if (currentPage < totalPages) {
             var nextPageButton = document.createElement("button");
-            nextPageButton.textContent = "下一頁>>";
+            nextPageButton.textContent = "下一頁";
             nextPageButton.classList.add("btn", "btn-primary", "me-2");
             nextPageButton.onclick = function () {
                 goToPage(currentPage + 1);
@@ -151,10 +150,12 @@
         }
     }
 
-    // 更新分頁數量
+    
+    // 更新分頁
     function updatePagination() {
         var totalPages = Math.ceil(datas.length / itemsPerPage);
         renderPagination(totalPages);
+        updatePaginationInfo();
     }
     
 
@@ -207,6 +208,10 @@
             var header5 = document.createElement("th");
             header5.textContent = "Action";
             headerRow.appendChild(header5);
+            
+            var header6 = document.createElement("th");
+            header6.textContent = "Level";
+            headerRow.appendChild(header6);
 
             thead.appendChild(headerRow);
             table.appendChild(thead);
@@ -239,6 +244,10 @@
                 var cell5 = document.createElement("td");
                 cell5.textContent = item.Action;
                 row.appendChild(cell5);
+                
+                var cell6 = document.createElement("td");
+                cell6.textContent = item.Level;
+                row.appendChild(cell6);
 
                 tbody.appendChild(row);
             }
@@ -283,5 +292,6 @@
     // 一開始顯示全部資料，並設定每頁顯示10筆
     renderTable(datas, 1);
     updatePagination();
+
 </script>
 

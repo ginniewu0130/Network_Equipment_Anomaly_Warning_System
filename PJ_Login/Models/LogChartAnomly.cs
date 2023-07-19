@@ -15,5 +15,6 @@ namespace PJ_Login.Models
         public int? SourcePort { get; set; }
         public int? DistinationPort { get; set; }
         public string Action { get; set; }
+        public string Level { get; set; }
     }
 }
