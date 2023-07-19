@@ -16,5 +16,6 @@ namespace PJ_Login.Models
         public int? DistinationPort { get; set; }
         public string Action { get; set; }
         public string Level { get; set; }
+        public string Anomly { get; set; }
     }
 }

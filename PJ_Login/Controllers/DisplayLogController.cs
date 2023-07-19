@@ -30,7 +30,9 @@ namespace PJ_Login.Controllers
                     DistinationPort = log.DistinationPort,
                     Action = log.Action,
                     Level = log.Level,
-                    id = log.id
+                    id = log.id,
+                    Anomly = log.Anomly
+                    
                 });
             }
 

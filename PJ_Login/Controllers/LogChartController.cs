@@ -132,7 +132,7 @@ namespace PJ_Login.Controllers
         }
         public IActionResult line_server_rst_anomlies()
         {
-            List<LogChartAnomly> charts = _context.LogChartAnomlies.ToList();
+            List<LogChartAnomly> charts = _context.LogChartAnomlies.Where(x => x.Anomly=="False").ToList();
             List<LogDBViewModel> bars = new List<LogDBViewModel>();
             foreach (LogChartAnomly chart in charts)
             {
@@ -148,7 +148,7 @@ namespace PJ_Login.Controllers
         }
         public IActionResult line_close_anomlies()
         {
-            List<LogChartAnomly> charts = _context.LogChartAnomlies.ToList();
+            List<LogChartAnomly> charts = _context.LogChartAnomlies.Where(x => x.Anomly == "False").ToList();
             List<LogDBViewModel> bars = new List<LogDBViewModel>();
             foreach (LogChartAnomly chart in charts)
             {
@@ -164,7 +164,7 @@ namespace PJ_Login.Controllers
         }
         public IActionResult line_client_rst_anomlies()
         {
-            List<LogChartAnomly> charts = _context.LogChartAnomlies.ToList();
+            List<LogChartAnomly> charts = _context.LogChartAnomlies.Where(x => x.Anomly == "False").ToList();
             List<LogDBViewModel> bars = new List<LogDBViewModel>();
             foreach (LogChartAnomly chart in charts)
             {
@@ -180,7 +180,7 @@ namespace PJ_Login.Controllers
         }
         public IActionResult line_deny_anomlies()
         {
-            List<LogChartAnomly> charts = _context.LogChartAnomlies.ToList();
+            List<LogChartAnomly> charts = _context.LogChartAnomlies.Where(x => x.Anomly == "False").ToList();
             List<LogDBViewModel> bars = new List<LogDBViewModel>();
             foreach (LogChartAnomly chart in charts)
             {
@@ -196,7 +196,7 @@ namespace PJ_Login.Controllers
         }
         public IActionResult line_ip_conn_anomlies()
         {
-            List<LogChartAnomly> charts = _context.LogChartAnomlies.ToList();
+            List<LogChartAnomly> charts = _context.LogChartAnomlies.Where(x => x.Anomly == "False").ToList();
             List<LogDBViewModel> bars = new List<LogDBViewModel>();
             foreach (LogChartAnomly chart in charts)
             {
@@ -212,7 +212,7 @@ namespace PJ_Login.Controllers
         }
         public IActionResult line_timeout_anomlies()
         {
-            List<LogChartAnomly> charts = _context.LogChartAnomlies.ToList();
+            List<LogChartAnomly> charts = _context.LogChartAnomlies.Where(x => x.Anomly == "False").ToList();
             List<LogDBViewModel> bars = new List<LogDBViewModel>();
             foreach (LogChartAnomly chart in charts)
             {
@@ -228,7 +228,7 @@ namespace PJ_Login.Controllers
         }
         public IActionResult line_accept_anomlies()
         {
-            List<LogChartAnomly> charts = _context.LogChartAnomlies.ToList();
+            List<LogChartAnomly> charts = _context.LogChartAnomlies.Where(x => x.Anomly == "False").ToList();
             List<LogDBViewModel> bars = new List<LogDBViewModel>();
             foreach (LogChartAnomly chart in charts)
             {

@@ -12,5 +12,6 @@ namespace PJ_Login.ViewModels
         public string Action { get; set; }
         public int id { get; set; }
         public string Level { get; set; }
+        public string Anomly { get; set; }
     }
 }

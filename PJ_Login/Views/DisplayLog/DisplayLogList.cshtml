@@ -25,6 +25,18 @@
         text-align: left;
         border-bottom: 1px solid #ddd;
     }
+
+    /* 新增正常類別的CSS設定 */
+    .normal {
+        color: green;
+        font-weight: bold;
+    }
+
+    /* 新增異常類別的CSS設定 */
+    .abnormal {
+        color: red;
+        font-weight: bold;
+    }
 </style>
 <h1 class="text-center">檢測Log清單</h1>
 <div class="d-flex flex-row justify-content-between">
@@ -38,6 +50,14 @@
     </div>
     
     <div class="d-flex flex-row">
+        <h5>檢測結果: </h5>
+        <select class="form-select rounded" aria-label="Result select" onchange="filterData(this.value)">
+            <option selected value="all">====ALL====</option>
+            <option value="True">正常</option>
+            <option value="False">異常</option>
+        </select>
+    </div>
+    @*<div class="d-flex flex-row">
         <h5>Action選取: </h5>
         <select class="form-select rounded" aria-label="Action select" onchange="filterData(this.value)">
             <option selected value="all">====ALL====</option>
@@ -49,7 +69,7 @@
             <option value="server-rst">Server-Reset</option>
             <option value="timeout">Timeout</option>
         </select>
-    </div>
+    </div>*@
     
 </div>
 
@@ -149,8 +169,8 @@
             paginationContainer.appendChild(nextPageButton);
         }
     }
-
     
+
     // 更新分頁
     function updatePagination() {
         var totalPages = Math.ceil(datas.length / itemsPerPage);
@@ -212,6 +232,10 @@
             var header6 = document.createElement("th");
             header6.textContent = "Level";
             headerRow.appendChild(header6);
+            
+            var header7 = document.createElement("th");
+            header7.textContent = "Result";
+            headerRow.appendChild(header7);
 
             thead.appendChild(headerRow);
             table.appendChild(thead);
@@ -248,6 +272,11 @@
                 var cell6 = document.createElement("td");
                 cell6.textContent = item.Level;
                 row.appendChild(cell6);
+                
+                var cell7 = document.createElement("td");
+                cell7.textContent = item.Anomly === "True" ? "正常" : "異常";
+                cell7.classList.add(item.Anomly === "True" ? "normal" : "abnormal");
+                row.appendChild(cell7);
 
                 tbody.appendChild(row);
             }
@@ -270,7 +299,7 @@
             renderTable(datas, 1);
         } else {
             var filteredData = datas.filter(function (item) {
-                return item.Action === selectedAction;
+                return item.Anomly === selectedAction;
             });
             renderTable(filteredData, 1); // 重置到第一頁
         }
@@ -288,6 +317,7 @@
         var paginationInfo = document.getElementById("paginationInfo");
         paginationInfo.innerHTML = `顯示第 ${(currentPage - 1) * itemsPerPage + 1} - ${Math.min(currentPage * itemsPerPage, totalItems)} 筆資料，共 ${totalItems} 筆，共 ${totalPages} 頁`;
     }
+    
 
     // 一開始顯示全部資料，並設定每頁顯示10筆
     renderTable(datas, 1);
