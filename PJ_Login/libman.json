@@ -25,6 +25,11 @@
     {
       "library": "bootstrap-daterangepicker@3.0.5",
       "destination": "wwwroot/lib/bootstrap-daterangepicker/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "@microsoft/signalr@latest",
+      "destination": "wwwroot/lib/microsoft/signalr/"
     }
   ]
 }

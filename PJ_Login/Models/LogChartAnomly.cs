@@ -17,5 +17,7 @@ namespace PJ_Login.Models
         public string Action { get; set; }
         public string Level { get; set; }
         public string Anomly { get; set; }
+        public DateTime Date { get; set; }
+        public TimeSpan Time { get; set; }
     }
 }

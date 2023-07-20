@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using PJ_Login.Data;
 using Microsoft.AspNetCore.Http;
 using PJ_Login.Models;
+using PJ_Login.Hubs;
 
 namespace PJ_Login
 {
@@ -29,6 +30,8 @@ namespace PJ_Login
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            //signalR
+            services.AddSignalR();
             //加入Cookie驗證, 同時設定選項
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
@@ -45,6 +48,7 @@ namespace PJ_Login
             services.AddOptions<AppSettings>()
                 .Bind(Configuration.GetSection("AppSettings"))
                 .ValidateDataAnnotations();
+            
             services.AddDbContext<LoginContext>(options =>
             {
                 options.UseSqlServer(Configuration.GetConnectionString("LoginContext"));
@@ -85,6 +89,7 @@ namespace PJ_Login
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<LogHub>("/logHub"); // 註冊LogHub
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Login}/{action=LoginPage}/{id?}");

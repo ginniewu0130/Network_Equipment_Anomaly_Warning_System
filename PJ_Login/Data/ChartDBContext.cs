@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using PJ_Login.Models;
+using PJ_Login.ViewModels;
 
 #nullable disable
 
@@ -587,5 +588,7 @@ namespace PJ_Login.Data
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+        public DbSet<PJ_Login.ViewModels.AbnomalLogViewmodel> AbnomalLogViewmodel { get; set; }
     }
 }

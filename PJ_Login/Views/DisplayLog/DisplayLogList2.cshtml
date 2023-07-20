@@ -1,0 +1,109 @@
+﻿@model IEnumerable<PJ_Login.ViewModels.AbnomalLogViewmodel>
+@using Newtonsoft.Json;
+@{
+    ViewData["Title"] = "Log預測結果";
+}
+<style>
+    body {
+        background-color: #ADD8E6;
+        font-family: Noto Sans TC;
+    }
+    h1{
+        text-align: center;
+    }
+    #tableContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #logTable {
+        width: auto;
+    }
+
+        #logTable thead th,
+        #logTable tbody td {
+            border-top: 2px solid #000; /* 設置邊框寬度和顏色 */
+            padding: 8px;
+            text-align: left;
+        }
+    #logTable tbody tr:hover {   
+        background-color: #F0F8FF; 
+    }
+</style>
+
+<h1>即時Log預測結果</h1>
+@*<div id="alertMessage" class="alert alert-success" style="display: none;"></div>*@
+<div id="tableContainer">
+    <table id="logTable" class="table">
+        <thead id="logTableHeader">
+            @*<tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Time)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.SourceIp)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DestinationIp)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Anomly)
+                </th>
+                <th></th>
+            </tr>*@
+        </thead>
+        @Html.Partial("_LogTablePartial",Model)
+    </table>
+</div>
+
+
+@section scripts {
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/lib/microsoft/signalr/dist/webworker/signalr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.10/signalr.min.js"></script>
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl('/logHub') // 設定 SignalR Hub 的 URL
+            .configureLogging(signalR.LogLevel.Information)
+            .build();
+
+        // 接收來自 SignalR Hub 的訊息
+        connection.on('ReceiveLogUpdate', function () {
+            fetchLogData();
+        });
+
+        function fetchLogData() {
+            var tableHeader = $('#logTable thead').html();
+            $.ajax({
+                url: '@Url.Action("DisplayLogListData", "DisplayLog")',
+                type: 'GET',
+                dataType: 'html',          
+                success: function (data) {
+                   
+                    $('#logTable tbody').html(data);
+ 
+                },
+                error: function () {
+                    console.log('無法獲取資料');
+                }
+            });
+        }
+
+        
+        $(document).ready(function () {
+            connection.start().then(function () {
+                // SignalR 連接成功
+                //$('#alertMessage').html('SignalR 連接成功。');
+                //$('#alertMessage').fadeIn().delay(2000).fadeOut(); // 顯示警告 3 秒後自動隱藏
+            }).catch(function (err) {
+                console.error(err); // 連接失敗時顯示錯誤訊息
+            });
+            fetchLogData(); 
+            setInterval(fetchLogData, 5000);
+        });
+    </script>
+}
