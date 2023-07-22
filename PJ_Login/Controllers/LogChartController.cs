@@ -244,9 +244,9 @@ namespace PJ_Login.Controllers
         }
         public IActionResult parallel()
         {
-            List<LogChart> charts = _context.LogCharts.ToList();
+            List<LogChartAnomly> charts = _context.LogChartAnomlies.Where(x => x.Anomly == "False").ToList();
             List<echartsViewModel> heat = new List<echartsViewModel>();
-            foreach (LogChart chart in charts)
+            foreach (LogChartAnomly chart in charts)
             {
                 heat.Add(new echartsViewModel
                 {
@@ -254,16 +254,19 @@ namespace PJ_Login.Controllers
                     SPort = chart.SourcePort,
                     y = chart.DestinationIp,
                     DPort = chart.DistinationPort,
-                    Action = chart.Action
+                    Action = chart.Action,
+                    Anomly = chart.Anomly,
+                    id = chart.id
+
                 });
             }
             return View(heat);
         }
         public IActionResult scatter_bar()
         {
-            List<LogChart> charts = _context.LogCharts.ToList();
+            List<LogChartAnomly> charts = _context.LogChartAnomlies.Where(x => x.Anomly == "False").ToList();
             List<echartsViewModel> heat = new List<echartsViewModel>();
-            foreach (LogChart chart in charts)
+            foreach (LogChartAnomly chart in charts)
             {
                 heat.Add(new echartsViewModel
                 {
@@ -271,7 +274,10 @@ namespace PJ_Login.Controllers
                     SPort = chart.SourcePort,
                     y = chart.DestinationIp,
                     DPort = chart.DistinationPort,
-                    Action = chart.Action
+                    Action = chart.Action,
+                    Anomly = chart.Anomly,
+                    id = chart.id
+
                 });
             }
             return View(heat);

@@ -51,7 +51,7 @@
         <img src="~/images/monitoring.png" />
     </div>
     <div class="homecontainer" id="filterButton" style="cursor: pointer;">
-        <h2>條件篩選</h2>
+        <h2>檢測歷史</h2>
         <img src="~/images/select.png" />
     </div>
 </div>
@@ -60,6 +60,6 @@
         window.location.href = '@Url.Action("DisplayLogList2", "DisplayLog")';
     });
     document.getElementById('filterButton').addEventListener('click', function () {
-        window.location.href = '@Url.Action("DisplayLogList", "DisplayLog")';
+        window.location.href = '@Url.Action("LogHistory", "DisplayLog")';
     });
 </script>

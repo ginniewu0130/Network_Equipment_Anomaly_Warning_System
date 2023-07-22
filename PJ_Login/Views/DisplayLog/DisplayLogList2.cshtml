@@ -1,73 +1,69 @@
 ﻿@model IEnumerable<PJ_Login.ViewModels.AbnomalLogViewmodel>
-@using Newtonsoft.Json;
+
 @{
     ViewData["Title"] = "Log預測結果";
+    int maxDisplayItems = 10; // 設定畫面上最多顯示的資料筆數
 }
 <style>
     body {
-        background-color: #ADD8E6;
-        font-family: Noto Sans TC;
+        background-color: #9ccdf2;
     }
-    h1{
+
+    h1 {
+        font-family: Noto Sans TC;
         text-align: center;
     }
-    #tableContainer {
+
+    .pageContainer {
         display: flex;
-        justify-content: center;
+        flex-direction: column;
         align-items: center;
     }
-    #logTable {
-        width: auto;
+
+    .tableContainer {
+        width: 100%;
+        max-width: 555px; /* 設定最大寬度，根據需要調整 */
     }
 
-        #logTable thead th,
-        #logTable tbody td {
-            border-top: 2px solid #000; /* 設置邊框寬度和顏色 */
-            padding: 8px;
-            text-align: left;
-        }
-    #logTable tbody tr:hover {   
-        background-color: #F0F8FF; 
+    #logTable {
+        width: 100%;
+    }
+
+    #logTable tbody td {
+        border-top: 2px solid #000;
+        border-bottom: 2px solid #000;
+        padding: 8px;
+        text-align: left;
+    }
+
+    #logTable tbody tr:hover {
+        background-color: #F0F8FF;
     }
 </style>
-
-<h1>即時Log預測結果</h1>
 @*<div id="alertMessage" class="alert alert-success" style="display: none;"></div>*@
-<div id="tableContainer">
-    <table id="logTable" class="table">
-        <thead id="logTableHeader">
-            @*<tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Date)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Time)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.SourceIp)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.DestinationIp)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Anomly)
-                </th>
-                <th></th>
-            </tr>*@
-        </thead>
-        @Html.Partial("_LogTablePartial",Model)
-    </table>
+<h1>即時Log預測結果</h1>
+
+<div class="pageContainer">
+    <div class="tableContainer">
+        <table id="logTable" class="table">
+            @Html.Partial("_LogTablePartial", Model)
+        </table>
+    </div>
+    <div>
+        <a href="@Url.Action("LogHistory", "DisplayLog")" class="btn btn-success">前往歷史紀錄</a>
+    </div>
 </div>
+
 
 
 @section scripts {
     <script src="~/lib/jquery/jquery.min.js"></script>
-    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
-    <script src="~/lib/microsoft/signalr/dist/webworker/signalr.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/5.0.10/signalr.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     <script>
         const connection = new signalR.HubConnectionBuilder()
-            .withUrl('/logHub') // 設定 SignalR Hub 的 URL
+            .withUrl('https://localhost:44373/logHub') // 設定 SignalR Hub 的 URL
             .configureLogging(signalR.LogLevel.Information)
             .build();
 
@@ -77,33 +73,34 @@
         });
 
         function fetchLogData() {
-            var tableHeader = $('#logTable thead').html();
-            $.ajax({
-                url: '@Url.Action("DisplayLogListData", "DisplayLog")',
-                type: 'GET',
-                dataType: 'html',          
-                success: function (data) {
-                   
-                    $('#logTable tbody').html(data);
- 
-                },
-                error: function () {
-                    console.log('無法獲取資料');
-                }
+            $.get('@Url.Action("DisplayLogListData", "DisplayLog")', function (data) {
+                $('#logTable tbody').html(data);
+                limitDisplayItems(); // 顯示資料更新後，重新限制顯示筆數
+            }).fail(function () {
+                console.log('無法獲取資料');
             });
         }
+        function limitDisplayItems() {
+            var maxItems = @maxDisplayItems; // 取得最多顯示的資料筆數
+            var $tableRows = $('#logTable tbody tr'); // 取得表格的每一列
+            if ($tableRows.length > maxItems) {
+                // 如果資料筆數超過最多顯示筆數，則隱藏多餘的列
+                $tableRows.slice(maxItems).hide();
+            }
+        }
 
-        
         $(document).ready(function () {
             connection.start().then(function () {
-                // SignalR 連接成功
+              //SignalR 連接成功
                 //$('#alertMessage').html('SignalR 連接成功。');
                 //$('#alertMessage').fadeIn().delay(2000).fadeOut(); // 顯示警告 3 秒後自動隱藏
+                fetchLogData();
             }).catch(function (err) {
                 console.error(err); // 連接失敗時顯示錯誤訊息
             });
-            fetchLogData(); 
             setInterval(fetchLogData, 5000);
         });
     </script>
+
 }
+

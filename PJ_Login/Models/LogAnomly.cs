@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Numerics;
 
 #nullable disable
 
@@ -7,6 +9,8 @@ namespace PJ_Login.Models
 {
     public partial class LogAnomly
     {
+        [Key]
+        public int id { get; set; }
         public string Month { get; set; }
         public byte? Date { get; set; }
         public TimeSpan? Time { get; set; }
@@ -21,7 +25,7 @@ namespace PJ_Login.Models
         public string Type { get; set; }
         public string Subtype { get; set; }
         public string EventType { get; set; }
-        public int? Level { get; set; }
+        public string Level { get; set; }
         public string VirtualDomain { get; set; }
         public string Severity { get; set; }
         public string SrcIp { get; set; }
@@ -44,11 +48,11 @@ namespace PJ_Login.Models
         public string Trandisp { get; set; }
         public string ApplicationCategory { get; set; }
         public string ApplicationList { get; set; }
-        public int? Duration { get; set; }
-        public int? SentByte { get; set; }
-        public int? RecoveredByte { get; set; }
-        public int? SentPkt { get; set; }
-        public int? RecoveredPkt { get; set; }
+        public long? Duration { get; set; }
+        public long? SentByte { get; set; }
+        public long? RecoveredByte { get; set; }
+        public long? SentPkt { get; set; }
+        public long? RecoveredPkt { get; set; }
         public string Direction { get; set; }
         public string Attack { get; set; }
         public string AttackId { get; set; }
@@ -64,8 +68,9 @@ namespace PJ_Login.Models
         public string Incidentserialno { get; set; }
         public string Message { get; set; }
         public byte? CoreRuleSetScore { get; set; }
-        public int? CoreRuleAction { get; set; }
+        public long? CoreRuleAction { get; set; }
         public string CoreRuleLevel { get; set; }
         public string LogDescription { get; set; }
+        public string Anomaly { get; set; }
     }
 }

@@ -90,6 +90,7 @@ namespace PJ_Login
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<LogHub>("/logHub"); // 註冊LogHub
+
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Login}/{action=LoginPage}/{id?}");
