@@ -1,0 +1,51 @@
+﻿/* 通用樣式 */
+body {
+    background-color: #9ccdf2;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight:bold;
+}
+
+hr {
+    border: 0;
+    border-top: 1px solid #000000;
+    margin: 20px 0;
+
+}
+
+dl.row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+}
+
+dt.col-sm-2 {
+    font-weight: bold;
+    font-size:20px;
+}
+dd.col-sm-10{
+    font-size:20px;
+}
+
+/* 狀態樣式 */
+.text-success {
+    color: #3c763d; /* 綠色 */
+    font-weight: bold;
+}
+
+.text-danger {
+    color: #a94442; /* 紅色 */
+    font-weight: bold;
+}
+
+.btn-success{
+    font-weight: bold;
+}
+a.btn.btn-success{
+    color: #fff;
+    text-decoration: none;
+}
