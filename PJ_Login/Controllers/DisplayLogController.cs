@@ -252,7 +252,7 @@ namespace PJ_Login.Controllers
         //new log history
         public async Task<IActionResult> LogHistory()
         {
-            List<LogAnomly> logHistory = await _ctx.LogAnomlies.ToListAsync();
+            List<LogAnomly> logHistory = await _ctx.LogAnomlies.ToListAsync();      
             var abnomalLogVM = logHistory.Select(log => new AbnomalLogViewmodel
             {
                 id = log.id,

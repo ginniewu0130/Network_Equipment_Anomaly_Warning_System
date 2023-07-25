@@ -46,11 +46,11 @@
 <div class="pageContainer">
     <div class="tableContainer">
         <table id="logTable" class="table">
-            @Html.Partial("_LogTablePartial", Model)
+            @await Html.PartialAsync("_LogTablePartial", Model)
         </table>
     </div>
     <div>
-        <a href="@Url.Action("LogHistory", "DisplayLog")" class="btn btn-success">前往歷史紀錄</a>
+        <a href="@Url.Action("LogHistory", "DisplayLog")" class="btn btn-success">前往檢測歷史</a>
     </div>
 </div>
 
