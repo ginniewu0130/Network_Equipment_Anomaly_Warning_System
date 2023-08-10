@@ -1,0 +1,35 @@
+{
+  "version": "1.0",
+  "defaultProvider": "cdnjs",
+  "libraries": [
+    {
+      "library": "Chart.js@2.9.3",
+      "destination": "wwwroot/lib/Chart.js/"
+    },
+    {
+      "library": "d3@7.8.5",
+      "destination": "wwwroot/lib/d3/"
+    },
+    {
+      "library": "jquery@3.7.0",
+      "destination": "wwwroot/lib/jquery/"
+    },
+    {
+      "library": "echarts@5.4.2",
+      "destination": "wwwroot/lib/echarts/"
+    },
+    {
+      "library": "sweetalert2@11.7.18",
+      "destination": "wwwroot/lib/sweetalert2/"
+    },
+    {
+      "library": "bootstrap-daterangepicker@3.0.5",
+      "destination": "wwwroot/lib/bootstrap-daterangepicker/"
+    },
+    {
+      "provider": "unpkg",
+      "library": "@microsoft/signalr@latest",
+      "destination": "wwwroot/lib/microsoft/signalr/"
+    }
+  ]
+}

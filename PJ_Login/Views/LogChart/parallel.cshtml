@@ -1,0 +1,375 @@
+﻿@using PJ_Login.ViewModels;
+@using Newtonsoft.Json;
+@model List<echartsViewModel>
+@{
+    ViewData["Title"] = "parallel";
+}
+<style>
+    body {
+        background-color: #9ccdf2;
+        font-family: Arial, sans-serif;
+    }
+
+    #page-content-wrapper {
+        background-color: white;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    #chart-group-1,
+    #chart-group-2 {
+        display: none;
+    }
+
+    .custom-link {
+        background-color: #3085d6;
+        color: white;
+    }
+
+    .collapsed {
+        display: block;
+    }
+</style>
+<div class="d-flex" id="wrapper">
+    <!-- 側邊導覽列 -->
+    <div class="bg-light border-right rounded" id="sidebar-wrapper">
+        <div class="list-group list-group-flush">
+            <a href="@Url.Action("parallel", "LogChart")" class="list-group-item list-group-item-action custom-link">主要路徑</a>
+            <a href="@Url.Action("scatter_bar", "LogChart")" class="list-group-item list-group-item-action custom-link">連線分析</a>
+            <a href="#" class="list-group-item list-group-item-action toggle-collapse custom-link" data-target="#chart-group-1">原始資料</a>
+            <div id="chart-group-1" class="collapsed">
+                <a href="@Url.Action("bar_accept", "LogChart")" class="list-group-item list-group-item-action">accept</a>
+                <a href="@Url.Action("bar_client_rst", "LogChart")" class="list-group-item list-group-item-action">client_rst</a>
+                <a href="@Url.Action("bar_close", "LogChart")" class="list-group-item list-group-item-action">close</a>
+                <a href="@Url.Action("bar_deny", "LogChart")" class="list-group-item list-group-item-action">dney</a>
+                <a href="@Url.Action("bar_ip_conn", "LogChart")" class="list-group-item list-group-item-action">ip_conn</a>
+                <a href="@Url.Action("bar_server_rst", "LogChart")" class="list-group-item list-group-item-action">server_rst</a>
+                <a href="@Url.Action("bar_timeout", "LogChart")" class="list-group-item list-group-item-action">timeout</a>
+            </div>
+            <a href="#" class="list-group-item list-group-item-action toggle-collapse custom-link" data-target="#chart-group-2">異常檢測</a>
+            <div id="chart-group-2" class="collapsed">
+                <a href="@Url.Action("line_accept_anomlies", "LogChart")" class="list-group-item list-group-item-action">accept</a>
+                <a href="@Url.Action("line_client_rst_anomlies", "LogChart")" class="list-group-item list-group-item-action">client_rst</a>
+                <a href="@Url.Action("line_close_anomlies", "LogChart")" class="list-group-item list-group-item-action">close</a>
+                <a href="@Url.Action("line_deny_anomlies", "LogChart")" class="list-group-item list-group-item-action">deny</a>
+                <a href="@Url.Action("line_ip_conn_anomlies", "LogChart")" class="list-group-item list-group-item-action">ip_conn</a>
+                <a href="@Url.Action("line_server_rst_anomlies", "LogChart")" class="list-group-item list-group-item-action">server_rst</a>
+                <a href="@Url.Action("line_timeout_anomlies", "LogChart")" class="list-group-item list-group-item-action">timeout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 內容區域 -->
+    <div id="page-content-wrapper" class="rounded">
+        <h1>異常連線分析平行座標圖</h1>
+        <div class="row">
+            <div class="col">
+                <input type="radio" name="myOptions" id="dataall" value="option1" />
+                <label for="option1">網路位置all</label>
+            </div>
+            <div class="col">
+                <input type="radio" name="myOptions" id="datarange1" value="option1" />
+                <label for="option1">SIP1~50</label>
+            </div>
+            <div class="col">
+                <input type="radio" name="myOptions" id="datarange2" value="option1" />
+                <label for="option1">SIP51~100</label>
+            </div>
+            <div class="col">
+                <input type="radio" name="myOptions" id="datarange3" value="option1" />
+                <label for="option1">SIP101~150</label>
+            </div>
+            <div class="col">
+                <input type="radio" name="myOptions" id="datarange4" value="option1" />
+                <label for="option1">SIP151~200</label>
+            </div>
+            <div class="col">
+                <input type="radio" name="myOptions" id="datarange5" value="option1" />
+                <label for="option1">SIP201~255</label>
+            </div>
+        </div>
+        <div id="chartContainer" style="width: 1000px; height: 500px;"></div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.2.1/dist/echarts.min.js"></script>
+<script src="~/lib/jquery/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.toggle-collapse').click(function (e) {
+            e.preventDefault();
+            var target = $(this).data('target');
+            $(target).slideToggle();
+            $(this).toggleClass('collapsed');
+        });
+    });
+
+    var dataall = document.getElementById('dataall');
+    var datarange1 = document.getElementById('datarange1');
+    var datarange2 = document.getElementById('datarange2');
+    var datarange3 = document.getElementById('datarange3');
+    var datarange4 = document.getElementById('datarange4');
+    var datarange5 = document.getElementById('datarange5');
+    var data1 = [];
+    var convertedData = [];
+    //條件觸發
+    //rangeall
+    dataall.addEventListener('click', function () {
+
+        var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model))';
+        var datas = JSON.parse(dataJson);
+        data1 = datas
+        convertedData = data1.map(function (item) {
+            return [item.x, item.y, item.Action];
+        });
+        var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
+        var dataaction = JSON.parse(dataActionJson);
+        var ActionData = [...new Set(dataaction)];
+        var chart = echarts.init(document.getElementById('chartContainer'));
+
+        var option;
+
+        option = {
+            parallelAxis: [
+                { dim: 0, name: 'SIP' },
+                { dim: 1, name: 'DIP' },
+                {
+                    dim: 2,
+                    name: 'Action',
+                    type: 'category',
+                    data: ActionData
+                }
+            ],
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 4
+                },
+                data: convertedData
+            }
+        };
+        chart.setOption(option);
+    });
+    //range1
+    datarange1.addEventListener('click', function () {
+
+        var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.x >= 1 && x.x<=50)))';
+        var datas = JSON.parse(dataJson);
+        data1 = datas
+        convertedData = data1.map(function (item) {
+            return [item.x, item.y, item.Action];
+        });
+        var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
+        var dataaction = JSON.parse(dataActionJson);
+        var ActionData = [...new Set(dataaction)];
+        var chart = echarts.init(document.getElementById('chartContainer'));
+
+        var option;
+
+        option = {
+            parallelAxis: [
+                { dim: 0, name: 'SIP' },
+                { dim: 1, name: 'DIP' },
+                {
+                    dim: 2,
+                    name: 'Action',
+                    type: 'category',
+                    data: ActionData
+                }
+            ],
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 4
+                },
+                data: convertedData
+            }
+        };
+        chart.setOption(option);
+    });
+    //range2
+    datarange2.addEventListener('click', function () {
+
+        var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.x >= 51 && x.x<=100)))';
+        var datas = JSON.parse(dataJson);
+        data1 = datas
+        convertedData = data1.map(function (item) {
+            return [item.x, item.y, item.Action];
+        });
+        var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
+        var dataaction = JSON.parse(dataActionJson);
+        var ActionData = [...new Set(dataaction)];
+        var chart = echarts.init(document.getElementById('chartContainer'));
+
+        var option;
+
+        option = {
+            parallelAxis: [
+                { dim: 0, name: 'SIP' },
+                { dim: 1, name: 'DIP' },
+                {
+                    dim: 2,
+                    name: 'Action',
+                    type: 'category',
+                    data: ActionData
+                }
+            ],
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 4
+                },
+                data: convertedData
+            }
+        };
+        chart.setOption(option);
+    });
+    //range3
+    datarange3.addEventListener('click', function () {
+
+        var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.x >= 101 && x.x<=150)))';
+        var datas = JSON.parse(dataJson);
+        data1 = datas
+        convertedData = data1.map(function (item) {
+            return [item.x, item.y, item.Action];
+        });
+        var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
+        var dataaction = JSON.parse(dataActionJson);
+        var ActionData = [...new Set(dataaction)];
+        var chart = echarts.init(document.getElementById('chartContainer'));
+
+        var option;
+
+        option = {
+            parallelAxis: [
+                { dim: 0, name: 'SIP' },
+                { dim: 1, name: 'DIP' },
+                {
+                    dim: 2,
+                    name: 'Action',
+                    type: 'category',
+                    data: ActionData
+                }
+            ],
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 4
+                },
+                data: convertedData
+            }
+        };
+        chart.setOption(option);
+    });
+    //range4
+    datarange4.addEventListener('click', function () {
+
+        var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.x >= 151 && x.x<=200)))';
+        var datas = JSON.parse(dataJson);
+        data1 = datas
+        convertedData = data1.map(function (item) {
+            return [item.x, item.y, item.Action];
+        });
+        var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
+        var dataaction = JSON.parse(dataActionJson);
+        var ActionData = [...new Set(dataaction)];
+        var chart = echarts.init(document.getElementById('chartContainer'));
+
+        var option;
+
+        option = {
+            parallelAxis: [
+                { dim: 0, name: 'SIP' },
+                { dim: 1, name: 'DIP' },
+                {
+                    dim: 2,
+                    name: 'Action',
+                    type: 'category',
+                    data: ActionData
+                }
+            ],
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 4
+                },
+                data: convertedData
+            }
+        };
+        chart.setOption(option);
+    });
+    //range5
+    datarange5.addEventListener('click', function () {
+
+        var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.x >= 201 && x.x<=255)))';
+        var datas = JSON.parse(dataJson);
+        data1 = datas
+        convertedData = data1.map(function (item) {
+            return [item.x, item.y, item.Action];
+        });
+        var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
+        var dataaction = JSON.parse(dataActionJson);
+        var ActionData = [...new Set(dataaction)];
+        var chart = echarts.init(document.getElementById('chartContainer'));
+
+        var option;
+
+        option = {
+            parallelAxis: [
+                { dim: 0, name: 'SIP' },
+                { dim: 1, name: 'DIP' },
+                {
+                    dim: 2,
+                    name: 'Action',
+                    type: 'category',
+                    data: ActionData
+                }
+            ],
+            series: {
+                type: 'parallel',
+                lineStyle: {
+                    width: 4
+                },
+                data: convertedData
+            }
+        };
+        chart.setOption(option);
+    });
+    //var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model))';
+    //var datas = JSON.parse(dataJson);
+    //var convertedData = datas.map(function (item) {
+    //    return [item.x, item.Sport, item.y, item.Dport, item.Action];
+    //});
+    var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model))';
+    var datas = JSON.parse(dataJson);
+    convertedData = datas.map(function (item) {
+        return [item.x, item.y, item.Action];
+    });
+    var dataActionJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Select(x => x.Action)))';
+    var dataaction = JSON.parse(dataActionJson);
+    var ActionData = [...new Set(dataaction)];
+    var chart = echarts.init(document.getElementById('chartContainer'));
+
+    var option;
+
+    option = {
+        parallelAxis: [
+            { dim: 0, name: 'SIP' },
+            { dim: 1, name: 'DIP' },
+            {
+                dim: 2,
+                name: 'Action',
+                type: 'category',
+                data: ActionData
+            }
+        ],
+        series: {
+            type: 'parallel',
+            lineStyle: {
+                width: 4
+            },
+            data: convertedData
+        }
+    };
+    chart.setOption(option);
+</script>

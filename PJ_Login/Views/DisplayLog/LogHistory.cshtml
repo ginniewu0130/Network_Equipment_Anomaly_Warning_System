@@ -1,0 +1,142 @@
+﻿@model IEnumerable<PJ_Login.ViewModels.AbnomalLogViewmodel>
+
+@{
+    ViewData["Title"] = "LogHistory";
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.css" />
+<style>
+    body{
+        background-color: #9ccdf2;
+    }
+
+    h1 {
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    #tableContainer {
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.3s ease;
+        cursor: pointer;
+    }
+
+    .dataTables_wrapper .dataTables_length select{
+        background-color:white;
+    }
+    .dataTables_wrapper .dataTables_filter {
+        text-align: left;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        background-color: white;
+    }
+
+</style>
+<h1>Log異常檢測歷史紀錄</h1>
+<table class="table" id="tableContainer">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Date2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Time2)
+            </th>         
+            <th>
+                @Html.DisplayNameFor(model => model.SrcIp)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DstIp)
+            </th>        
+            <th>
+                @Html.DisplayNameFor(model => model.Level)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Action)
+            </th>            
+            <th>
+                @Html.DisplayNameFor(model => model.Anomaly)
+            </th>
+            <th>詳細內容</th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+    var date = item.Date2?.ToString("yyyy-MM-dd");
+        <tr>
+            <td>
+                @date
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time2)
+            </td>            
+            <td>
+                @Html.DisplayFor(modelItem => item.SrcIp)
+            </td>                       
+            <td>
+                @Html.DisplayFor(modelItem => item.DstIp)
+            </td>                                
+            <td>
+                @Html.DisplayFor(modelItem => item.Level)
+            </td>           
+            <td>
+                @Html.DisplayFor(modelItem => item.Action)
+            </td>                 
+            <td>
+                @if (item.Anomaly == "True")
+                {
+                    <!-- 如果Anomly為"True"，顯示綠色的"正常" -->
+                    <span class="text-success">正常</span>
+                }
+                else
+                {
+                    <!-- 如果Anomly為"False"，顯示紅色的"異常" -->
+                    <span class="text-danger">異常</span>
+                }
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.id">查看</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+    
+@section scripts{
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+        //$(document).ready(function () {
+        //    $('#tableContainer').DataTable();
+        //});
+        $(document).ready(function () {
+            // 定義自訂排序的方法
+            $.fn.dataTable.ext.order['custom-date-time'] = function (settings, col) {
+                return this.api().column(col, { order: 'index' }).nodes().map(function (td, i) {
+                    var datePart = $(td).closest('tr').find('td:eq(0)').text();
+                    var timePart = $(td).text();
+                    var datetime = new Date(datePart + ' ' + timePart);
+                    return datetime.getTime();
+                });
+            };
+
+            // 初始化DataTable
+            $('#tableContainer').DataTable({
+                columnDefs: [
+                    {
+                        targets: [0, 1],
+                        type: 'custom-date-time'
+                    }
+                ],
+                order: [[0, 'desc'], [1, 'desc']] 
+            });
+        });
+
+    </script>
+}

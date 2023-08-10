@@ -1,0 +1,68 @@
+﻿body {
+    background-color: #9ccdf2;
+}
+
+.detailscontainer {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 28px;
+    text-align: center;
+    font-weight: bold;
+}
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+}
+dl.row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-gap: 10px;
+}
+
+dt.col-sm-2 {
+    font-weight: bold;
+}
+
+dd.col-sm-10 {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* 狀態樣式 */
+.text-success {
+    color: #5cb85c; /* 綠色 */
+    font-weight: bold;
+}
+
+.text-danger {
+    color: #d9534f; /* 紅色 */
+    font-weight: bold;
+}
+
+/* 返回按鈕樣式 */
+.btn-success {
+    font-weight: bold;
+    background-color: #5cb85c; /* 綠色 */
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+a.btn.btn-success{
+    color: #fff;
+    text-decoration: none;
+}
+.btn-success:hover {
+    background-color: #449d44; /* 深綠色 */
+}
+.btn-container {
+    text-align: center;
+}

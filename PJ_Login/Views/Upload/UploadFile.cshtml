@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "UploadFile";
+}
+<link href="~/css/uploadfile.css" rel="stylesheet" />
+<style>
+    body {
+        background-color: #9ccdf2;
+    }
+</style>
+<h1 class="upload-title">訓練模型檔案上傳</h1>
+
+<div class="upload-form">
+    <form asp-action="UploadFile" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="file" class="file-label">請選擇檔案：</label>
+            <input type="file" name="file" id="file" class="form-control-file file-input" />
+        </div>
+        <button type="submit" class="btn btn-primary upload-btn">上傳檔案</button>
+    </form>
+
+    @if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+        <div class="message">
+            <p>@ViewBag.Message</p>
+        </div>
+    }
+</div>
+

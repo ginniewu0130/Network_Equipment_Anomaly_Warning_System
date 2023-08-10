@@ -1,0 +1,40 @@
+﻿@model PJ_Login.Models.UserLogin
+
+@{
+    ViewData["Title"] = "Details";
+}
+<style>
+    body {
+        background-color: #9ccdf2;
+    }
+</style>
+<h1>詳細帳號內容</h1>
+
+<div>
+    <h4>帳號管理</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.EmployeeId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.EmployeeId)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Account)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Account)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Password)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Password)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.UserId">前往編輯</a> |
+    <a asp-action="AccountManage">返回</a>
+</div>

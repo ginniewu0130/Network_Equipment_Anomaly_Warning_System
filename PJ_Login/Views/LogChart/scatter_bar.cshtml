@@ -1,0 +1,407 @@
+﻿@using PJ_Login.ViewModels;
+@using Newtonsoft.Json;
+@model List<echartsViewModel>
+@{
+    ViewData["Title"] = "scatter_bar";
+}
+<style>
+    body {
+        background-color: #9ccdf2;
+        font-family: Arial, sans-serif;
+    }
+
+    #page-content-wrapper {
+        background-color: white;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    #chart-group-1,
+    #chart-group-2 {
+        display: none;
+    }
+
+    .custom-link {
+        background-color: #3085d6;
+        color: white;
+    }
+
+    .collapsed {
+        display: block;
+    }
+</style>
+<div class="d-flex" id="wrapper">
+    <!-- 側邊導覽列 -->
+    <div class="bg-light border-right" id="sidebar-wrapper">
+        <div class="list-group list-group-flush">
+            <a href="@Url.Action("parallel", "LogChart")" class="list-group-item list-group-item-action custom-link">主要路徑</a>
+            <a href="@Url.Action("scatter_bar", "LogChart")" class="list-group-item list-group-item-action custom-link">連線分析</a>
+            <a href="#" class="list-group-item list-group-item-action toggle-collapse custom-link" data-target="#chart-group-1">原始資料</a>
+            <div id="chart-group-1" class="collapsed">
+                <a href="@Url.Action("bar_accept", "LogChart")" class="list-group-item list-group-item-action">accept</a>
+                <a href="@Url.Action("bar_client_rst", "LogChart")" class="list-group-item list-group-item-action">client_rst</a>
+                <a href="@Url.Action("bar_close", "LogChart")" class="list-group-item list-group-item-action">close</a>
+                <a href="@Url.Action("bar_deny", "LogChart")" class="list-group-item list-group-item-action">dney</a>
+                <a href="@Url.Action("bar_ip_conn", "LogChart")" class="list-group-item list-group-item-action">ip_conn</a>
+                <a href="@Url.Action("bar_server_rst", "LogChart")" class="list-group-item list-group-item-action">server_rst</a>
+                <a href="@Url.Action("bar_timeout", "LogChart")" class="list-group-item list-group-item-action">timeout</a>
+            </div>
+            <a href="#" class="list-group-item list-group-item-action toggle-collapse custom-link" data-target="#chart-group-2">異常檢測</a>
+            <div id="chart-group-2" class="collapsed">
+                <a href="@Url.Action("line_accept_anomlies", "LogChart")" class="list-group-item list-group-item-action">accept</a>
+                <a href="@Url.Action("line_client_rst_anomlies", "LogChart")" class="list-group-item list-group-item-action">client_rst</a>
+                <a href="@Url.Action("line_close_anomlies", "LogChart")" class="list-group-item list-group-item-action">close</a>
+                <a href="@Url.Action("line_deny_anomlies", "LogChart")" class="list-group-item list-group-item-action">deny</a>
+                <a href="@Url.Action("line_ip_conn_anomlies", "LogChart")" class="list-group-item list-group-item-action">ip_conn</a>
+                <a href="@Url.Action("line_server_rst_anomlies", "LogChart")" class="list-group-item list-group-item-action">server_rst</a>
+                <a href="@Url.Action("line_timeout_anomlies", "LogChart")" class="list-group-item list-group-item-action">timeout</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 內容區域 -->
+    <div id="page-content-wrapper" class="rounded">
+        <h1>異常IP連線模式總覽輪播圖</h1>
+        <div id="chartContainer" style="width: 1000px; height: 500px;"></div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.2.1/dist/echarts.min.js"></script>
+<script src="~/lib/jquery/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.toggle-collapse').click(function (e) {
+            e.preventDefault();
+            var target = $(this).data('target');
+            $(target).slideToggle();
+            $(this).toggleClass('collapsed');
+        });
+    });
+    var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model))';
+    var datas = JSON.parse(dataJson);
+    var convertedData = datas.map(function (item) {
+        return [item.x, item.y, item.Action];
+    });
+    var dataacceptJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.Action == "accept")))';
+    var dataaccept = JSON.parse(dataacceptJson);
+    var Data1 = dataaccept.map(function (item) {
+        return [item.x, item.y];
+    });
+    var datatimeoutJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.Action == "timeout")))';
+    var datatimeout = JSON.parse(datatimeoutJson);
+    var Data2 = datatimeout.map(function (item) {
+        return [item.x, item.y];
+    });
+    var datadenyJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.Action == "deny")))';
+    var datadeny = JSON.parse(datadenyJson);
+    var Data3 = datadeny.map(function (item) {
+        return [item.x, item.y];
+    });
+    var datacloseJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.Action == "close")))';
+    var dataclose = JSON.parse(datacloseJson);
+    var Data4 = dataclose.map(function (item) {
+        return [item.x, item.y];
+    });
+    var dataipJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.Action == "ip-conn")))';
+    var dataip = JSON.parse(dataipJson);
+    var Data5 = dataip.map(function (item) {
+        return [item.x, item.y];
+    });
+    var dataserverJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.Action == "server-rst")))';
+    var dataserver = JSON.parse(dataserverJson);
+    var Data6 = dataserver.map(function (item) {
+        return [item.x, item.y];
+    });
+    var dataclientJson = '@Html.Raw(JsonConvert.SerializeObject(Model.Where(x => x.Action == "client-rst")))';
+    var dataclient = JSON.parse(dataclientJson);
+    var Data7 = dataclient.map(function (item) {
+        return [item.x, item.y];
+    });
+    var chart = echarts.init(document.getElementById('chartContainer'));
+    function calculateAverage(data, dim) {
+        let total = 0;
+        for (var i = 0; i < data.length; i++) {
+            total += data[i][dim];
+        }
+        return (total /= data.length);
+    }
+    const scatterOption = (option = {
+        xAxis: {
+            scale: true,
+            axisLabel: {
+                textStyle: {
+                    fontSize: 20
+                }
+            }
+        },
+        yAxis: {
+            scale: true,
+            axisLabel: {
+                textStyle: {
+                    fontSize: 20
+                }
+            }
+        },
+
+        series: [
+            {
+                type: 'scatter',
+                id: 'accept',
+                dataGroupId: 'accept',
+                universalTransition: {
+                    enabled: true,
+                    delay: function (idx, count) {
+                        return Math.random() * 400;
+                    }
+                },
+                data: Data1,
+                itemStyle: {
+                    color: 'blue' // 自行調整顏色
+                }
+            },
+            {
+                type: 'scatter',
+                id: 'timeout',
+                dataGroupId: 'timeout',
+                universalTransition: {
+                    enabled: true,
+                    delay: function (idx, count) {
+                        return Math.random() * 400;
+                    }
+                },
+                data: Data2,
+                itemStyle: {
+                    color: 'red' // 自行調整顏色
+                }
+            },
+            {
+                type: 'scatter',
+                id: 'deny',
+                dataGroupId: 'deny',
+                universalTransition: {
+                    enabled: true,
+                    delay: function (idx, count) {
+                        return Math.random() * 400;
+                    }
+                },
+                data: Data3,
+                itemStyle: {
+                    color: 'green' // 自行調整顏色
+                }
+            },
+            {
+                type: 'scatter',
+                id: 'close',
+                dataGroupId: 'close',
+                universalTransition: {
+                    enabled: true,
+                    delay: function (idx, count) {
+                        return Math.random() * 400;
+                    }
+                },
+                data: Data4,
+                itemStyle: {
+                    color: 'purple' // 自行調整顏色
+                }
+            },
+            {
+                type: 'scatter',
+                id: 'ip-conn',
+                dataGroupId: 'ip-conn',
+                universalTransition: {
+                    enabled: true,
+                    delay: function (idx, count) {
+                        return Math.random() * 400;
+                    }
+                },
+                data: Data5,
+                itemStyle: {
+                    color: 'pink' // 自行調整顏色
+                }
+            },
+            {
+                type: 'scatter',
+                id: 'server-rst',
+                dataGroupId: 'server-rst',
+                universalTransition: {
+                    enabled: true,
+                    delay: function (idx, count) {
+                        return Math.random() * 800;
+                    }
+                },
+                data: Data6,
+                itemStyle: {
+                    color: 'grey' // 自行調整顏色
+                }
+            },
+            {
+                type: 'scatter',
+                id: 'client-rst',
+                dataGroupId: 'client-rst',
+                universalTransition: {
+                    enabled: true,
+                    delay: function (idx, count) {
+                        return Math.random() * 800;
+                    }
+                },
+                data: Data7,
+                itemStyle: {
+                    color: 'yellow' // 自行調整顏色
+                }
+            }
+        ]
+    });
+    const barOption = {
+        xAxis: {
+            type: 'category',
+            data: ['accept', 'timeout', 'deny', 'close', 'ip-conn', 'server-rst', 'client-rst'],
+            axisLabel: {
+                textStyle: {
+                    fontSize: 20
+                }
+            }
+        },
+        yAxis: {
+            axisLabel: {
+                textStyle: {
+                    fontSize: 20
+                }
+            }
+        },
+        series: [
+            {
+                type: 'bar',
+                id: 'total',
+                data: [
+                    {
+                        value: Data1.length,
+                        groupId: 'accept',
+                        itemStyle: {
+                            color: 'blue' // 自行調整顏色
+                        },
+                        label: {
+                            show: true, // 顯示標籤
+                            position: 'top', // 標籤位置
+                            formatter: '{b}: {c}', // 標籤格式
+                            color: 'black',
+                            textStyle: {
+                                fontSize: 18
+                            }
+                        }
+                    },
+                    {
+                        value: Data2.length,
+                        groupId: 'timeout',
+                        itemStyle: {
+                            color: 'red' // 自行調整顏色
+                        },
+                        label: {
+                            show: true, // 顯示標籤
+                            position: 'top', // 標籤位置
+                            formatter: '{b}: {c}', // 標籤格式
+                            color: 'black',
+                            textStyle: {
+                                fontSize: 18
+                            }
+                        }
+
+                    },
+                    {
+                        value: Data3.length,
+                        groupId: 'deny',
+                        itemStyle: {
+                            color: 'green' // 自行調整顏色
+                        },
+                        label: {
+                            show: true, // 顯示標籤
+                            position: 'top', // 標籤位置
+                            formatter: '{b}: {c}', // 標籤格式
+                            color: 'black',
+                            textStyle: {
+                                fontSize: 18
+                            }
+                        }
+                    },
+                    {
+                        value: Data4.length,
+                        groupId: 'close',
+                        itemStyle: {
+                            color: 'purple' // 自行調整顏色
+                        },
+                        label: {
+                            show: true, // 顯示標籤
+                            position: 'top', // 標籤位置
+                            formatter: '{b}: {c}', // 標籤格式
+                            color: 'black',
+                            textStyle: {
+                                fontSize: 18
+                            }
+                        }
+                    },
+                    {
+                        value: Data5.length,
+                        groupId: 'ip-conn',
+                        itemStyle: {
+                            color: 'pink' // 自行調整顏色
+                        },
+                        label: {
+                            show: true, // 顯示標籤
+                            position: 'top', // 標籤位置
+                            formatter: '{b}: {c}', // 標籤格式
+                            color: 'black',
+                            textStyle: {
+                                fontSize: 18
+                            }
+                        }
+                    },
+                    {
+                        value: Data6.length,
+                        groupId: 'server-rst',
+                        itemStyle: {
+                            color: 'grey' // 自行調整顏色
+                        },
+                        label: {
+                            show: true, // 顯示標籤
+                            position: 'top', // 標籤位置
+                            formatter: '{b}: {c}', // 標籤格式
+                            color: 'black',
+                            textStyle: {
+                                fontSize: 18
+                            }
+                        }
+                    },
+                    {
+                        value: Data7.length,
+                        groupId: 'client-rst',
+                        itemStyle: {
+                            color: 'yellow' // 自行調整顏色
+                        },
+                        label: {
+                            show: true, // 顯示標籤
+                            position: 'top', // 標籤位置
+                            formatter: '{b}: {c}', // 標籤格式
+                            color: 'black',
+                            textStyle: {
+                                fontSize: 18
+                            }
+                        }
+                    },
+                ],
+
+                universalTransition: {
+                    enabled: true,
+                    seriesKey: ['accept', 'timeout', 'deny', 'close', 'ip-conn', 'server-rst', 'client-rst'],
+                    delay: function (idx, count) {
+                        return Math.random() * 800;
+                    }
+                }
+            }
+        ]
+    };
+    let currentOption = scatterOption;
+    setInterval(function () {
+        currentOption = currentOption === scatterOption ? barOption : scatterOption;
+        chart.setOption(currentOption, true);
+    }, 10000);
+    chart.setOption(option);
+</script>

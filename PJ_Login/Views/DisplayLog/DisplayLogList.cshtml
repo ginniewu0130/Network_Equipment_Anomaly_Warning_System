@@ -1,0 +1,377 @@
+﻿@model List<AbnomalLogViewmodel>
+@using Newtonsoft.Json;
+@{
+    ViewBag.Title = "Log預測結果";
+}
+<link href="~/lib/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+
+<style>
+    body {
+        background-color: #9ccdf2;
+        font-family: Arial, sans-serif;
+    }
+    #dataContainer {
+        margin-top: 20px;
+        background-color: #fff;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .form-control{
+        width:unset;
+    }
+    th, td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+
+    /* 新增正常類別的CSS設定 */
+    .normal {
+        color: green;
+        font-weight: bold;
+    }
+
+    /* 新增異常類別的CSS設定 */
+    .abnormal {
+        color: red;
+        font-weight: bold;
+    }
+</style>
+<h1 class="text-center">Log歷史檢測結果</h1>
+<div class="d-flex flex-row justify-content-between">
+    <div class="d-flex flex-row">
+        <h5>每頁顯示筆數: </h5>
+        <select id="itemsPerPageSelect" class="form-select rounded" aria-label="Items per page">
+            <option selected value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+        </select>
+    </div>
+    <div class="d-flex flex-row">
+        <label for="startDatePicker">開始日期：</label>
+        <input type="date" id="startDatePicker" class="form-control me-2" value="" />
+
+        <label for="endDatePicker">結束日期：</label>
+        <input type="date" id="endDatePicker" class="form-control me-2" value="" />
+
+        <button class="btn btn-primary" onclick="filterByDateRange()">篩選</button>
+    </div>
+    <div class="d-flex flex-row">
+        <h5>檢測結果: </h5>
+        <select class="form-select rounded" aria-label="Result select" onchange="filterData(this.value)">
+            <option selected value="all">====ALL====</option>
+            <option value="True">正常</option>
+            <option value="False">異常</option>
+        </select>
+    </div>
+
+    
+</div>
+
+<div id="dataContainer" class="rounded"></div>
+<div id="pagination" class="pagination-container d-flex justify-content-center mt-3"></div>
+<div id="paginationInfo" class="text-center mt-3"></div>
+<p id="lastUpdateInfo" class="text-center mt-2"></p>
+
+
+
+<script src="~/lib/sweetalert2/sweetalert2.min.js"></script>
+<script>
+    var dataJson = '@Html.Raw(JsonConvert.SerializeObject(Model.OrderByDescending(x => x.id)))';
+    var datas = JSON.parse(dataJson);
+    var dataContainer = document.getElementById("dataContainer");
+    var table = null;
+    var itemsPerPage = 10;
+    var currentPage = 1; // 加入當前頁數變數
+    var maxPageButtons = 5; // 最多顯示幾個分頁按鈕
+    var itemsPerPageSelect = document.getElementById("itemsPerPageSelect");
+
+    itemsPerPageSelect.onchange = function () {
+        var newItemsPerPage = parseInt(itemsPerPageSelect.value);
+        var totalPages = Math.ceil(datas.length / newItemsPerPage);
+        var currentPageAfterChange = Math.min(currentPage, totalPages);
+
+        itemsPerPage = newItemsPerPage;
+        goToPage(currentPageAfterChange);
+    };
+
+    function goToPage(page) {
+        var totalPages = Math.ceil(datas.length / itemsPerPage);
+        if (page >= 1 && page <= totalPages) {
+            currentPage = page;
+            renderTable(datas, currentPage);
+            updatePagination();
+        }
+    }
+
+    // 分頁控制函數
+    function renderPagination(totalPages) {
+        var paginationContainer = document.getElementById("pagination");
+        paginationContainer.innerHTML = '';
+
+        var startPage = 1;
+        var endPage = maxPageButtons;
+        if (currentPage > Math.floor(maxPageButtons / 2)) {
+            startPage = currentPage - Math.floor(maxPageButtons / 2);
+            endPage = currentPage + Math.floor(maxPageButtons / 2);
+        }
+        if (endPage > totalPages) {
+            endPage = totalPages;
+            startPage = Math.max(1, totalPages - maxPageButtons + 1);
+        }
+
+        // 添加 "上一頁" 按鈕
+        if (currentPage > 1) {
+            var prevPageButton = document.createElement("button");
+            prevPageButton.textContent = "上一頁";
+            prevPageButton.classList.add("btn", "btn-primary", "me-2");
+            prevPageButton.onclick = function () {
+                goToPage(currentPage - 1);
+            };
+            paginationContainer.appendChild(prevPageButton);
+        }
+
+        for (var i = startPage; i <= endPage; i++) {
+            var pageButton = document.createElement("button");
+            pageButton.textContent = i;
+            pageButton.classList.add("btn", "btn-primary", "me-2");
+            pageButton.onclick = function () {
+                var page = parseInt(this.textContent);
+                renderTable(datas, page);
+
+                // 移除所有按鈕的 "active" 類別
+                var pageButtons = document.querySelectorAll("#pagination button");
+                pageButtons.forEach(button => button.classList.remove("active"));
+
+                // 為當前頁數的按鈕加上 "active" 類別
+                this.classList.add("active");
+            };
+
+            if (i === currentPage) {
+                pageButton.classList.add("active"); // 標記當前頁按鈕
+            }
+
+            paginationContainer.appendChild(pageButton);
+        }
+
+        // 添加 "下一頁" 按鈕
+        if (currentPage < totalPages) {
+            var nextPageButton = document.createElement("button");
+            nextPageButton.textContent = "下一頁";
+            nextPageButton.classList.add("btn", "btn-primary", "me-2");
+            nextPageButton.onclick = function () {
+                goToPage(currentPage + 1);
+            };
+            paginationContainer.appendChild(nextPageButton);
+        }
+    }
+
+
+    // 更新分頁
+    function updatePagination() {
+        var totalPages = Math.ceil(datas.length / itemsPerPage);
+        renderPagination(totalPages);
+        updatePaginationInfo();
+    }
+
+
+    function clearTable() {
+        if (table) {
+            table.remove();
+            table = null;
+        }
+    }
+
+    function renderTable(data, page) {
+        clearTable(); // 清空原有表格
+        dataContainer.innerHTML = '';
+
+        if (data.length === 0) {
+            Swal.fire({
+                icon: 'warning',
+                title: '查無資料',
+                text: '抱歉，沒有符合篩選條件的資料。',
+            });
+        } else {
+            currentPage = page; // 更新當前頁數
+
+            // 計算每頁顯示的資料範圍
+            var startIndex = (currentPage - 1) * itemsPerPage;
+            var endIndex = Math.min(startIndex + itemsPerPage, data.length);
+            // 建立表格元素
+            table = document.createElement("table");
+
+            // 建立表頭
+            var thead = document.createElement("thead");
+            var headerRow = document.createElement("tr");
+
+            var header1 = document.createElement("th");
+            header1.textContent = "Date";
+            headerRow.appendChild(header1);
+
+            var header2 = document.createElement("th");
+            header2.textContent = "Time";
+            headerRow.appendChild(header2);
+
+            var header3 = document.createElement("th");
+            header3.textContent = "Source Ip";
+            headerRow.appendChild(header3);
+
+            var header4 = document.createElement("th");
+            header4.textContent = "Destination IP";
+            headerRow.appendChild(header4);
+
+            var header5 = document.createElement("th");
+            header5.textContent = "Action";
+            headerRow.appendChild(header5);
+
+            var header6 = document.createElement("th");
+            header6.textContent = "Level";
+            headerRow.appendChild(header6);
+
+            var header7 = document.createElement("th");
+            header7.textContent = "Result";
+            headerRow.appendChild(header7);
+
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // 建立表身
+            var tbody = document.createElement("tbody");
+
+            for (var i = startIndex; i < endIndex; i++) {
+                var item = data[i];
+
+                // 建立資料行
+                var row = document.createElement("tr");
+                var date = new Date(item.Date);
+                var cell1 = document.createElement("td");
+                cell1.textContent = date.toLocaleDateString();
+                row.appendChild(cell1);
+
+                var cell2 = document.createElement("td");
+                cell2.textContent = item.Time;
+                row.appendChild(cell2);
+
+                var cell3 = document.createElement("td");
+                cell3.textContent = item.SrcIp;
+                row.appendChild(cell3);
+
+                var cell4 = document.createElement("td");
+                cell4.textContent = item.DstIp;
+                row.appendChild(cell4);
+
+                var cell5 = document.createElement("td");
+                cell5.textContent = item.Action;
+                row.appendChild(cell5);
+
+                var cell6 = document.createElement("td");
+                cell6.textContent = item.Level;
+                row.appendChild(cell6);
+
+                var cell7 = document.createElement("td");
+                cell7.textContent = item.Anomaly === "True" ? "正常" : "異常";
+                cell7.classList.add(item.Anomaly === "True" ? "normal" : "abnormal");
+                row.appendChild(cell7);
+
+                tbody.appendChild(row);
+            }
+
+            table.appendChild(tbody);
+
+            // 將表格元素添加到容器元素中
+            dataContainer.appendChild(table);
+            updatePaginationInfo();
+
+            // 最後更新時間
+            var currentTime = new Date().toLocaleString();
+            var lastUpdateInfo = document.getElementById("lastUpdateInfo");
+            lastUpdateInfo.textContent = "資料最後更新時間：" + currentTime;
+        }
+    }
+
+    function filterData(selectedAction) {
+        if (selectedAction === "all") {
+            document.getElementById("resultSelect").value = "all";
+            renderTable(datas, 1);
+        } else {
+            var filteredData = datas.filter(function (item) {
+                return item.Anomly === selectedAction;
+            });
+            currentPage = 1; // 將currentPage設回第一頁
+            renderTable(filteredData, 1); // 重置到第一頁
+        }
+        updatePagination();
+    }
+    // 依日期區間篩選資料
+    function filterByDateRange() {
+        var startDate = document.getElementById("startDatePicker").value;
+        var endDate = document.getElementById("endDatePicker").value;
+
+        if (startDate && endDate) {
+            var startDateObj = new Date(startDate);
+            var endDateObj = new Date(endDate);
+
+            // 驗證日期區間的合法性
+            if (startDateObj >= endDateObj) {
+                // 若起始日期晚於結束日期，則交換兩者值
+                var temp = startDate;
+                startDate = endDate;
+                endDate = temp;
+                startDateObj = new Date(startDate);
+                endDateObj = new Date(endDate);
+            }
+
+            var filteredData = datas.filter(function (item) {
+                var itemDate = new Date(item.Date);
+                return itemDate >= startDateObj && itemDate <= endDateObj;
+            });
+            currentPage = 1; // 將currentPage設回第一頁
+            renderTable(filteredData, 1); // 重置到第一頁
+            updatePagination();
+        } else {
+            // 若未選擇日期範圍
+            renderTable(datas, 1);
+        }
+         updatePagination();
+    }
+
+    function changeItemsPerPage(value) {
+        itemsPerPage = parseInt(value);
+        // 重新顯示目前所在頁數的資料
+        renderTable(datas, currentPage);
+    }
+    // 分頁資訊
+    function updatePaginationInfo() {
+        var totalPages = Math.ceil(datas.length / itemsPerPage);
+        var totalItems = datas.length;
+        var paginationInfo = document.getElementById("paginationInfo");
+        paginationInfo.innerHTML = `顯示第 ${(currentPage - 1) * itemsPerPage + 1} - ${Math.min(currentPage * itemsPerPage, totalItems)} 筆資料，共 ${totalItems} 筆，共 ${totalPages} 頁`;
+    }
+    // 設定日期選擇器的預設值為當天日期
+    (function setDefaultDates() {
+        var today = new Date();
+        var year = today.getFullYear();
+        var month = (today.getMonth() + 1).toString().padStart(2, '0');
+        var day = today.getDate().toString().padStart(2, '0');
+
+        var todayDateString = `${year}-${month}-${day}`;
+
+        document.getElementById("startDatePicker").value = todayDateString;
+        document.getElementById("endDatePicker").value = todayDateString;
+    })();
+
+    // 一開始顯示全部資料，並設定每頁顯示10筆
+    renderTable(datas, 1);
+    updatePagination();
+
+    //setInterval(function () {
+    //    location.reload();
+    //}, 5000);
+</script>
+
